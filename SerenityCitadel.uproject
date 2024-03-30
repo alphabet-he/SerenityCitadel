@@ -30,7 +30,16 @@
 			"AdditionalDependencies": [
 				"Engine"
 			]
-		}
+		},
+		{
+			"Name": "HomeModule",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG"
+			]
+		},
 	],
 	"Plugins": [
 		{
