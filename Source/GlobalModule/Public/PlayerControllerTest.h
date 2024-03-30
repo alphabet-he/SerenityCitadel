@@ -18,7 +18,7 @@ class UEnhancedInputLocalPlayerSubsystem;
  * 
  */
 UCLASS()
-class SERENITYCITADEL_API APlayerControllerTest : public APlayerController
+class GLOBALMODULE_API APlayerControllerTest : public APlayerController
 {
 	GENERATED_BODY()
 public:

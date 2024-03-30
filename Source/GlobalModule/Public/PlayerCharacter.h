@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class SERENITYCITADEL_API APlayerCharacter : public ASerenityCitadelCharacter
+class GLOBALMODULE_API APlayerCharacter : public ASerenityCitadelCharacter
 {
 	GENERATED_BODY()
 	

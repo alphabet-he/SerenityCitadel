@@ -12,7 +12,7 @@ public class SerenityCitadelTarget : TargetRules
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
 		ExtraModuleNames.Add("SerenityCitadel");
 		ExtraModuleNames.Add("FarmModule");
-		ExtraModuleNames.Add("GeneralCodes");
+		ExtraModuleNames.Add("GlobalModule");
 		ExtraModuleNames.Add("HomeModule");
     }
 }

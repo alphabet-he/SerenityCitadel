@@ -13,9 +13,7 @@ public class HomeModule : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"UMG",
-            "Slate", 
-			"SlateCore",
-            "GeneralCodes",
+			"GlobalModule",
 			"SerenityCitadel"
         });
 	}

@@ -13,9 +13,9 @@ public class FarmModule : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"UMG",
-            "Slate", 
+			"Slate", 
 			"SlateCore",
-            "GeneralCodes",
+			"GlobalModule",
 			"SerenityCitadel"
         });
 	}

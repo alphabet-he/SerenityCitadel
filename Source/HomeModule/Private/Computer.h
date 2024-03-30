@@ -4,10 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "InteractionInterface.h"
 #include "Computer.generated.h"
 
+class UWidgetComponent;
+class APlayerControllerTest;
+
 UCLASS()
-class AComputer : public AActor
+class AComputer : public AActor, public IInteractionInterface
 {
 	GENERATED_BODY()
 	
@@ -18,9 +22,5 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 };
