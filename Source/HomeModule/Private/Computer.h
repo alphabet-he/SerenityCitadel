@@ -4,14 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractionInterface.h"
+#include "CommonInteractable.h"
 #include "Computer.generated.h"
 
-class UWidgetComponent;
-class APlayerControllerTest;
-
 UCLASS()
-class AComputer : public AActor, public IInteractionInterface
+class AComputer : public ACommonInteractable
 {
 	GENERATED_BODY()
 	

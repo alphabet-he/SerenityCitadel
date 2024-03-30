@@ -32,11 +32,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	UWidgetComponent* EToInteractWidget;
 
-	APlayerControllerTest* PlayerController;
-
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	virtual void EnterPlayerInteractionBox() override;
 

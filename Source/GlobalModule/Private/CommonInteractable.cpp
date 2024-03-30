@@ -3,7 +3,6 @@
 
 #include "CommonInteractable.h"
 #include "Components/WidgetComponent.h"
-#include <Kismet/GameplayStatics.h>
 #include "PlayerControllerTest.h"
 
 // Sets default values
@@ -21,6 +20,8 @@ ACommonInteractable::ACommonInteractable()
 
 	EToInteractWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interaction Widget"));
 	EToInteractWidget->SetupAttachment(RootComponent);
+
+	InteractableMesh->SetCollisionObjectType(ECC_EngineTraceChannel1);
 }
 
 // Called when the game starts or when spawned
@@ -29,20 +30,15 @@ void ACommonInteractable::BeginPlay()
 	Super::BeginPlay();
 	
 	EToInteractWidget->SetVisibility(false);
-
-	PlayerController = Cast<APlayerControllerTest>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	check(PlayerController);
-}
-
-void ACommonInteractable::Tick(float DeltaTime)
-{
 }
 
 void ACommonInteractable::EnterPlayerInteractionBox()
 {
+	EToInteractWidget->SetVisibility(true);
 }
 
 void ACommonInteractable::LeavePlayerInteractionBox()
 {
+	EToInteractWidget->SetVisibility(false);
 }
 
