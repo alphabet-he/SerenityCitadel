@@ -18,7 +18,7 @@ class IInteractionInterface;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config = Game)
-class SERENITYCITADEL_API ASerenityCitadelCharacter : public ANinjaCharacter
+class GLOBALMODULE_API ASerenityCitadelCharacter : public ANinjaCharacter
 {
 	GENERATED_BODY()
 

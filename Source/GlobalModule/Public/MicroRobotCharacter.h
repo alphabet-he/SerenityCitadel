@@ -11,7 +11,7 @@
  */
 
 UCLASS()
-class SERENITYCITADEL_API AMicroRobotCharacter : public ASerenityCitadelCharacter
+class GLOBALMODULE_API AMicroRobotCharacter : public ASerenityCitadelCharacter
 {
 	GENERATED_BODY()
 

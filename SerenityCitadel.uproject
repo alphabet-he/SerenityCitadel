@@ -9,9 +9,7 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine",
-				"UMG",
-				"NinjaCharacter"
+				"Engine"
 			]
 		},
 		{
@@ -24,11 +22,13 @@
 			]
 		},
 		{
-			"Name": "GeneralCodes",
+			"Name": "GlobalModule",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine"
+				"Engine",
+				"UMG",
+				"NinjaCharacter"
 			]
 		},
 		{

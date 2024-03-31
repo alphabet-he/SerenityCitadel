@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Plants.h"
+#include "Plant.h"
 
 // Sets default values
-APlants::APlants()
+APlant::APlant()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -12,14 +12,14 @@ APlants::APlants()
 }
 
 // Called when the game starts or when spawned
-void APlants::BeginPlay()
+void APlant::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void APlants::Tick(float DeltaTime)
+void APlant::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 

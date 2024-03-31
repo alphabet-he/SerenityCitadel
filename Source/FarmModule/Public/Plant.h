@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GroundEntity.h"
-#include "Plants.generated.h"
+#include "Plant.generated.h"
 
 UCLASS()
-class FARMMODULE_API APlants : public AGroundEntity
+class FARMMODULE_API APlant : public AGroundEntity
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	APlants();
+	APlant();
 	UPROPERTY()
 	int PlantType = -1;
 

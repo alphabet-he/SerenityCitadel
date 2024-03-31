@@ -4,7 +4,7 @@
 #include "Teleporter.h"
 #include "Components/WidgetComponent.h"
 #include <Kismet/GameplayStatics.h>
-#include <SerenityCitadel/PlayerControllerTest.h>
+#include "PlayerControllerTest.h"
 
 // Sets default values
 ATeleporter::ATeleporter()

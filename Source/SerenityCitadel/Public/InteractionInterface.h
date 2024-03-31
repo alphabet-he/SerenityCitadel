@@ -9,13 +9,13 @@
 // This class does not need to be modified.
 UINTERFACE(Blueprintable)
 
-class GENERALCODES_API UInteractionInterface : public UInterface
+class SERENITYCITADEL_API UInteractionInterface : public UInterface
 {
 	GENERATED_BODY()
 
 };
 
-class GENERALCODES_API IInteractionInterface {
+class SERENITYCITADEL_API IInteractionInterface {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.

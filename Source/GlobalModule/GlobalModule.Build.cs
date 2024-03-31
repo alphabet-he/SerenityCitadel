@@ -2,16 +2,20 @@
 
 using UnrealBuildTool;
 
-public class GeneralCodes : ModuleRules
+public class GlobalModule : ModuleRules
 {
-	public GeneralCodes(ReadOnlyTargetRules Target) : base(Target)
+	public GlobalModule(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", 
 			"CoreUObject",
-			"Engine"
+			"Engine",
+			"UMG",
+			"SerenityCitadel",
+			"InputCore",
+			"EnhancedInput"
 		});
 	}
 }
