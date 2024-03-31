@@ -10,8 +10,12 @@ AFarmingGrid::AFarmingGrid()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	
-	GridMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GridMesh"));
-	SetRootComponent(GridMesh);
+	USceneComponent* _RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root Component"));
+
+	RootComponent = _RootComponent;
+
+	GridMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Grid Mesh"));
+	GridMesh->SetupAttachment(RootComponent);
 	
 }
 
@@ -19,36 +23,45 @@ AFarmingGrid::AFarmingGrid()
 void AFarmingGrid::BeginPlay()
 {
 	Super::BeginPlay();
-	UGameInstance* GameInst = GetGameInstance();
-	FarmingSubsystem = GameInst->GetSubsystem<UFarmingSubsystem>();
-	int scale = FarmingSubsystem->GridScale;
-	GridMesh->SetStaticMesh(Mesh);
-	GridMesh->SetWorldScale3D(FVector(scale, scale, scale));
-}
-
-// Called every frame
-void AFarmingGrid::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void AFarmingGrid::UpdateGrid()
 {
-	check(FarmingSubsystem);
+	UGameInstance* GameInst = GetGameInstance();
+	FarmingSubsystem = GameInst->GetSubsystem<UFarmingSubsystem>();
+	if(!FarmingSubsystem) return;
 	if (gridType == -1) return;
+	UMaterial* m = FarmingSubsystem->GridTextures[gridType];
+	UpdateGrid(m);
+
+}
+
+void AFarmingGrid::UpdateGrid(UMaterial* material)
+{
 	if (GridMesh)
 	{
-		UMaterial* m = FarmingSubsystem->GridTextures[gridType];
 		int numberOfMaterials = GridMesh->GetNumMaterials();
-		for (int index = 0; index < numberOfMaterials; index++)
+		if (GridMesh->GetMaterial(0))
 		{
-			if (GridMesh->GetMaterial(index))
-			{
-				GridMesh->SetMaterial(index, m);
-			}
+			GridMesh->SetMaterial(0, material);
 		}
 	}
+}
 
+void AFarmingGrid::SetPolluted(UMaterial* material)
+{
+	bPolluted = true;
+	if (GridMesh->GetMaterial(1)) {
+		GridMesh->SetMaterial(1, material);
+	}
+	
+}
+
+void AFarmingGrid::ClearPolluted()
+{
+	bPolluted = false;
+	if (GridMesh->GetMaterial(1)) {
+		GridMesh->SetMaterial(1, nullptr);
+	}
 }
 

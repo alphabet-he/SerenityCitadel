@@ -18,29 +18,53 @@ class FARMMODULE_API AFarmingGrid : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AFarmingGrid();
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UStaticMesh* Mesh = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* GridMesh = nullptr;
 
 private:
 	UPROPERTY() 
 	AGroundEntity* EntityAbove = nullptr;
-	UPROPERTY()
-	UStaticMeshComponent* GridMesh = nullptr;
+	
 	UPROPERTY()
 	UFarmingSubsystem* FarmingSubsystem = nullptr;
-	UPROPERTY() 
-	int gridType = -1;
+
+	
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	int gridType = -1;
+
+	bool bPolluted = false;
+
+	float PollutionPercent = 0;
+
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+
 	void setPlant(AGroundEntity* plantPtr) { EntityAbove = plantPtr; };
+
 	AGroundEntity* getPlant() { return EntityAbove; };
+
 	void setGridType(GridType i) { gridType = static_cast<int>(i); };
+
 	int getGridType() { return gridType; };
+
 	void UpdateGrid();
+
+	void UpdateGrid(UMaterial* material);
+
+	void SetPolluted(UMaterial* material);
+
+	void ClearPolluted();
+
+	FORCEINLINE void SetPollutionPercent(float percent) {
+		PollutionPercent = percent;
+	}
+
+	FORCEINLINE float GetPollutionPercent() {
+		return PollutionPercent;
+	}
+
 };
