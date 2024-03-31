@@ -23,8 +23,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> ReferenceMesh;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AFarmingGrid> BP_GridActor;
