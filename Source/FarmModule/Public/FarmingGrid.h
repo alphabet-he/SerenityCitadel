@@ -55,6 +55,8 @@ public:
 
 	void UpdateGrid(UMaterial* material);
 
+	void UpdateGrid(UMaterialInstance* material);
+
 	void SetPolluted(UMaterial* material);
 
 	void ClearPolluted();

@@ -33,7 +33,7 @@ protected:
 
 public:
 	UPROPERTY(EditAnywhere)
-	TArray<UMaterial*> GridTextures;
+	TArray<UMaterialInstance*> GridTextures;
 
 	UPROPERTY(EditAnywhere)
 	UMaterial* PollutedMaterial;
