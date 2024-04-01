@@ -64,7 +64,7 @@ void AArmFarmManager::GenerateGeometry(FNoiseMapParams HeightMapParams,
 			FRandomStream Stream(FMath::Rand());
 
 			if (pollutionMap.GetElement(i, j) < PlantGrowthPollutionThreshold &&
-				moistureMap.GetElement(i, j) < PlantGrowthMoistureThreshold) {
+				moistureMap.GetElement(i, j) > PlantGrowthMoistureThreshold) {
 				
 				float rnd = FMath::FRandRange(0.0, 1.0);
 				if (rnd < PlantGrowthProb) {

@@ -48,6 +48,18 @@ void AFarmingGrid::UpdateGrid(UMaterial* material)
 	}
 }
 
+void AFarmingGrid::UpdateGrid(UMaterialInstance* material)
+{
+	if (GridMesh)
+	{
+		int numberOfMaterials = GridMesh->GetNumMaterials();
+		if (GridMesh->GetMaterial(0))
+		{
+			GridMesh->SetMaterial(0, material);
+		}
+	}
+}
+
 void AFarmingGrid::SetPolluted(UMaterial* material)
 {
 	bPolluted = true;
