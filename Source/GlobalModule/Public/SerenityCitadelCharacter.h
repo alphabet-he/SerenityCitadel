@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "NinjaCharacter.h"
 #include "Logging/LogMacros.h"
+#include "NinjaCharacter.h"
+#include "Blueprint/UserWidget.h"
+#include "PlayerControllerTest.h"
 #include "SerenityCitadelCharacter.generated.h"
 
 // Forward declaration
@@ -48,6 +50,18 @@ public:
 	void HandleJump();
 	void HandleCrouch();
 	void HandleInteract();
+	void HandleEsc();
+
+	void AddActiveWdiget(UUserWidget* widget) { ActiveWidgets.Push(widget); }
+	TArray<UUserWidget*> GetActiveWidgets() { return ActiveWidgets; }
+	UUserWidget* GetWidgetOnTop() { return ActiveWidgets.Top(); }
+	void ClearAllWidgets() { ActiveWidgets.Empty(); }
+	void RemoveWidget(UUserWidget* widget) { ActiveWidgets.Remove(widget); }
+
+	void SetPlayerController(APlayerControllerTest* pc) { PlayerController = pc; }
+	APlayerControllerTest* GetPlayerController() { return PlayerController; }
+
+	void PauseGame();
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -58,6 +72,9 @@ private:
 
 	IInteractionInterface* InteractionInterface = nullptr;
 
+	TArray<UUserWidget*> ActiveWidgets;
+
+	APlayerControllerTest* PlayerController;
 
 private:
 

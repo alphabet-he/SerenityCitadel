@@ -144,6 +144,32 @@ void ASerenityCitadelCharacter::HandleInteract()
 	}
 }
 
+void ASerenityCitadelCharacter::HandleEsc()
+{
+	if (ActiveWidgets.Num() == 0) {
+		PauseGame();
+	}
+
+	else {
+		UUserWidget* widget = ActiveWidgets.Pop();
+		widget->RemoveFromParent();
+		if (ActiveWidgets.Num() == 0) {
+			// if no UI is shown, enable movement
+			PlayerController->DisableMouseCursor();
+			PlayerController->EnableMovement();
+
+			// if inside an interactable
+			if (InteractionInterface) {
+				InteractionInterface->ShowInteractionWidget();
+			}
+		}
+	}
+}
+
+void ASerenityCitadelCharacter::PauseGame()
+{
+}
+
 // Called when the game starts or when spawned
 void ASerenityCitadelCharacter::BeginPlay()
 {

@@ -2,8 +2,6 @@
 
 
 #include "CommonInteractable.h"
-#include "Components/WidgetComponent.h"
-#include "PlayerControllerTest.h"
 
 // Sets default values
 ACommonInteractable::ACommonInteractable()
@@ -38,6 +36,16 @@ void ACommonInteractable::EnterPlayerInteractionBox()
 }
 
 void ACommonInteractable::LeavePlayerInteractionBox()
+{
+	EToInteractWidget->SetVisibility(false);
+}
+
+void ACommonInteractable::ShowInteractionWidget()
+{
+	EToInteractWidget->SetVisibility(true);
+}
+
+void ACommonInteractable::HideInteractionWidget()
 {
 	EToInteractWidget->SetVisibility(false);
 }

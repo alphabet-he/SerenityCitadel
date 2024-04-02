@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "InteractionInterface.h"
+#include "Components/WidgetComponent.h"
 #include "CommonInteractable.generated.h"
 
 
@@ -24,7 +25,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-private:
+protected:
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* InteractableMesh;
@@ -37,5 +38,9 @@ public:
 	virtual void EnterPlayerInteractionBox() override;
 
 	virtual void LeavePlayerInteractionBox() override;
+
+	virtual void ShowInteractionWidget() override;
+
+	virtual void HideInteractionWidget() override;
 
 };

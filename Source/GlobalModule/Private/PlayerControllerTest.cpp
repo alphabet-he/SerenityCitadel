@@ -15,6 +15,9 @@ void APlayerControllerTest::OnPossess(APawn* aPawn)
 	PlayerCharacter = Cast<ASerenityCitadelCharacter>(aPawn);
 	checkf(PlayerCharacter, TEXT("Casting to SerenityCitadelCharacter failed."));
 
+	// Set controller information for the character
+	PlayerCharacter->SetPlayerController(this);
+
 	// Define Enhanced input component
 	EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 	checkf(EnhancedInputComponent, TEXT("Cannot access Enhanced Input Component"));
@@ -33,6 +36,10 @@ void APlayerControllerTest::OnPossess(APawn* aPawn)
 	// Bind movement mapping context
 	checkf(MovementMappingContent, TEXT("MovementMappingContext is not defined"));
 	InputSubsystem->AddMappingContext(MovementMappingContent, 0);
+
+	// Bind UI mapping context
+	checkf(UIActionMappingContent, TEXT("UIMappingContext is not defined"));
+	InputSubsystem->AddMappingContext(UIActionMappingContent, 0);
 
 	
 
@@ -58,6 +65,9 @@ void APlayerControllerTest::OnPossess(APawn* aPawn)
 		EnhancedInputComponent->BindAction(ActionInteract, ETriggerEvent::Triggered, PlayerCharacter,
 			&ASerenityCitadelCharacter::HandleInteract);
 
+	if (ActionUIEsc)
+		EnhancedInputComponent->BindAction(ActionUIEsc, ETriggerEvent::Triggered, PlayerCharacter,
+			&ASerenityCitadelCharacter::HandleEsc);
 
 }
 

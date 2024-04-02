@@ -9,7 +9,8 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine"
+				"Engine",
+				"UMG"
 			]
 		},
 		{
@@ -39,7 +40,7 @@
 				"Engine",
 				"UMG"
 			]
-		},
+		}
 	],
 	"Plugins": [
 		{
