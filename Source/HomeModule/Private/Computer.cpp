@@ -20,26 +20,33 @@ AComputer::AComputer()
 void AComputer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	PlayerController = Cast<APlayerControllerTest>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	check(PlayerController);
-
-	PlayerCharacter = PlayerController->GetPlayerCharacter();
-	check(PlayerCharacter);
 	
 	HomeGameMode = Cast<AHomeGameMode>(UGameplayStatics::GetGameMode(this));
 	check(HomeGameMode);
+
+	// seems like this begin play is called before game mode's start play,
+	// so the player character and controller cannot be initialized
+	PlayerCharacter = HomeGameMode->GetPlayerCharacter();
+	PlayerController = HomeGameMode->GetPlayerController();
 }
 
 void AComputer::InteractWithPlayer()
 {
+	if (!PlayerCharacter) {
+		PlayerCharacter = HomeGameMode->GetPlayerCharacter();
+	}
+
+	if (!PlayerController) {
+		PlayerController = HomeGameMode->GetPlayerController();
+	}
+
 	if (!HomeGameMode->DesktopWidget) {
 		UE_LOG(LogTemp, Warning, TEXT("No desktop widget instance"));
 		return;
 	}
 
 	// there is widget showing
-	if (PlayerCharacter->GetActiveWidgets().Contains(HomeGameMode->DesktopWidget)) 
+	if (PlayerCharacter->GetActiveWidgets().Contains(HomeGameMode->DesktopWidget))
 	{
 		HomeGameMode->DesktopWidget->RemoveFromParent();
 		PlayerCharacter->RemoveWidget(HomeGameMode->DesktopWidget);

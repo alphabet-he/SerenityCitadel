@@ -12,6 +12,12 @@
 
 class UButton;
 class UImage;
+class AHomeGameMode;
+class APlayerControllerTest;
+class ASerenityCitadelCharacter;
+class UCommissionButton;
+class ARobotToRepair;
+class UMyGameInstanceSubsystem;
 
 UCLASS()
 class UCommissionPage : public UUserWidget
@@ -20,7 +26,7 @@ class UCommissionPage : public UUserWidget
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UButton* CarlyCommissionButton;
+	UCommissionButton* CarlyCommissionButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* BlockButton;
@@ -34,6 +40,19 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UImage* CarlyCommissionDetail;
 
+	AHomeGameMode* HomeGameMode;
+
+	APlayerControllerTest* PlayerController;
+
+	ASerenityCitadelCharacter* PlayerCharacter;
+
+	TSubclassOf<ARobotToRepair> currRobotClass = nullptr;
+
+	UMyGameInstanceSubsystem* GameInstanceSubsystem;
+
+public:
+	void SetCurrRobotClass(TSubclassOf<ARobotToRepair> robotClass);
+
 private:
 	void NativeConstruct() override;
 
@@ -42,5 +61,8 @@ private:
 
 	UFUNCTION()
 	void AcceptCommission();
+
+	UFUNCTION()
+	void CommissionAcceptedEnd();
 	
 };

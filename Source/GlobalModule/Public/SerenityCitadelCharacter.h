@@ -63,6 +63,8 @@ public:
 
 	void PauseGame();
 
+	void ShowEToInteract();
+
 private:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* InteractionBox;

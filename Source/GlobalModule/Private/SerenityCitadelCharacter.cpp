@@ -158,16 +158,20 @@ void ASerenityCitadelCharacter::HandleEsc()
 			PlayerController->DisableMouseCursor();
 			PlayerController->EnableMovement();
 
-			// if inside an interactable
-			if (InteractionInterface) {
-				InteractionInterface->ShowInteractionWidget();
-			}
+			ShowEToInteract();
 		}
 	}
 }
 
 void ASerenityCitadelCharacter::PauseGame()
 {
+}
+
+void ASerenityCitadelCharacter::ShowEToInteract()
+{
+	if (InteractionInterface) {
+		InteractionInterface->ShowInteractionWidget();
+	}
 }
 
 // Called when the game starts or when spawned

@@ -4,14 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "ComputerDesktop.h"
+#include "CommissionPage.h"
+#include "InTransitWidget.h"
+#include "SerenityCitadelCharacter.h"
+#include "DialogueWidget.h"
 #include "HomeGameMode.generated.h"
 
 /**
  * 
  */
 
-class UComputerDesktop;
-class UCommissionPage;
 
 UCLASS()
 class HOMEMODULE_API AHomeGameMode : public AGameModeBase
@@ -28,7 +31,24 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCommissionPage> CommissionPageWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UInTransitWidget> InTransitWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UDialogueWidget> DialogueWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	FVector RobotSpawnPos;
+
 	UComputerDesktop* DesktopWidget;
 	UCommissionPage* CommissionPageWidget;
-	
+	UInTransitWidget* InTransitWidget;
+	UDialogueWidget* DialogueWidget;
+
+	APlayerControllerTest* GetPlayerController() { return PlayerController; }
+	ASerenityCitadelCharacter* GetPlayerCharacter() { return PlayerCharacter; }
+
+private:
+	APlayerControllerTest* PlayerController;
+	ASerenityCitadelCharacter* PlayerCharacter;
 };
