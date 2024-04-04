@@ -38,7 +38,16 @@ private:
 	UButton* RejectButton;
 
 	UPROPERTY(meta = (BindWidget))
+	UButton* CompleteButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* WithdrawButton;
+
+	UPROPERTY(meta = (BindWidget))
 	UImage* CarlyCommissionDetail;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* AcceptedStatus;
 
 	AHomeGameMode* HomeGameMode;
 
@@ -49,6 +58,10 @@ private:
 	TSubclassOf<ARobotToRepair> currRobotClass = nullptr;
 
 	UMyGameInstanceSubsystem* GameInstanceSubsystem;
+
+	// for a list of commissions, make these two bool into array
+	bool bDealt = false;
+	bool bAccepted = false;
 
 public:
 	void SetCurrRobotClass(TSubclassOf<ARobotToRepair> robotClass);

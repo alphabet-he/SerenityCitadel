@@ -35,15 +35,30 @@ void UCommissionPage::ClickCommissionDetail()
 	if (CarlyCommissionDetail->GetVisibility() == ESlateVisibility::Visible) {
 		CarlyCommissionDetail->SetVisibility(ESlateVisibility::Hidden);
 		BlockButton->SetVisibility(ESlateVisibility::Hidden);
-		AcceptButton->SetVisibility(ESlateVisibility::Hidden);
-		RejectButton->SetVisibility(ESlateVisibility::Hidden);
-		currRobotClass = nullptr;
+
+		if (bDealt) {
+			CompleteButton->SetVisibility(ESlateVisibility::Hidden);
+			WithdrawButton->SetVisibility(ESlateVisibility::Hidden);
+			AcceptedStatus->SetVisibility(ESlateVisibility::Hidden);
+		}
+		else {
+			AcceptButton->SetVisibility(ESlateVisibility::Hidden);
+			RejectButton->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 	else {
 		CarlyCommissionDetail->SetVisibility(ESlateVisibility::Visible);
 		BlockButton->SetVisibility(ESlateVisibility::Visible);
-		AcceptButton->SetVisibility(ESlateVisibility::Visible);
-		RejectButton->SetVisibility(ESlateVisibility::Visible);
+
+		if (bDealt) {
+			CompleteButton->SetVisibility(ESlateVisibility::Visible);
+			WithdrawButton->SetVisibility(ESlateVisibility::Visible);
+			AcceptedStatus->SetVisibility(ESlateVisibility::Visible);
+		}
+		else {
+			AcceptButton->SetVisibility(ESlateVisibility::Visible);
+			RejectButton->SetVisibility(ESlateVisibility::Visible);
+		}
 	}
 }
 
@@ -73,6 +88,13 @@ void UCommissionPage::AcceptCommission()
 			currRobotClass, HomeGameMode->RobotSpawnPos, FRotator(90.0f, 0, 0), SpawnParameters);
 
 		GameInstanceSubsystem->RobotInRepair = RobotInRepair;
+
+		// switch buttons
+		AcceptButton->SetVisibility(ESlateVisibility::Hidden);
+		RejectButton->SetVisibility(ESlateVisibility::Hidden);
+		CompleteButton->SetVisibility(ESlateVisibility::Visible);
+		WithdrawButton->SetVisibility(ESlateVisibility::Visible);
+		AcceptedStatus->SetVisibility(ESlateVisibility::Visible);
 
 		FTimerHandle Handle;
 		GetWorld()->GetTimerManager().SetTimer(Handle, this, &UCommissionPage::CommissionAcceptedEnd, 2.0f);
