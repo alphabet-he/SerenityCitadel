@@ -8,12 +8,15 @@
 UCommissionButton::UCommissionButton()
 {
 	HomeGameMode = Cast<AHomeGameMode>(UGameplayStatics::GetGameMode(this));
-	check(HomeGameMode);
 
 	OnClicked.AddDynamic(this, &UCommissionButton::OnClick);
 }
 
 void UCommissionButton::OnClick()
 {
+	if (!HomeGameMode) {
+		HomeGameMode = Cast<AHomeGameMode>(UGameplayStatics::GetGameMode(this));
+	}
+
 	HomeGameMode->CommissionPageWidget->SetCurrRobotClass(RobotClass);
 }

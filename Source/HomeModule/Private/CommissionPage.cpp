@@ -70,7 +70,7 @@ void UCommissionPage::AcceptCommission()
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 		ARobotToRepair* RobotInRepair = GetWorld()->SpawnActor<ARobotToRepair>(
-			currRobotClass, HomeGameMode->RobotSpawnPos, FRotator(0, 90, 0), SpawnParameters);
+			currRobotClass, HomeGameMode->RobotSpawnPos, FRotator(90.0f, 0, 0), SpawnParameters);
 
 		GameInstanceSubsystem->RobotInRepair = RobotInRepair;
 
@@ -91,5 +91,11 @@ void UCommissionPage::CommissionAcceptedEnd()
 
 void UCommissionPage::SetCurrRobotClass(TSubclassOf<ARobotToRepair> robotClass)
 {
-	currRobotClass = robotClass;
+	if (currRobotClass != robotClass) {
+		currRobotClass = robotClass;
+	}
+	else {
+		currRobotClass = nullptr;
+	}
+	
 }
