@@ -39,4 +39,6 @@ public:
 		Date = newDate;
 		return;
 	}
+
+	AActor* RobotInRepair = nullptr;
 };

@@ -7,10 +7,7 @@
 #include "MyGameInstanceSubsystem.h"
 #include "HomeGameMode.h"
 #include <Kismet/GameplayStatics.h>
-#include "CommissionPage.h"
 #include <Components/Image.h>
-#include "SerenityCitadelCharacter.h"
-#include "PlayerControllerTest.h"
 
 
 void UComputerDesktop::NativeConstruct()
@@ -29,16 +26,16 @@ void UComputerDesktop::NativeConstruct()
 	);
 	check(GameInstanceSubsystem);
 
-	APlayerControllerTest* PlayerController = Cast<APlayerControllerTest>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	check(PlayerController);
-
-	PlayerCharacter = PlayerController->GetPlayerCharacter();
-	check(PlayerCharacter);
+	PlayerCharacter = HomeGameMode->GetPlayerCharacter();
 }
 
 
 void UComputerDesktop::OpenCommissionPage()
 {
+	if (!PlayerCharacter) {
+		PlayerCharacter = HomeGameMode->GetPlayerCharacter();
+	}
+
 	if (HomeGameMode->CommissionPageWidget) {
 		HomeGameMode->CommissionPageWidget->AddToViewport();
 		//HomeGameMode->DesktopWidget->RemoveFromViewport();

@@ -37,11 +37,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Interaction")
 	UInputAction* ActionInteract = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|UI Actions")
+	UInputAction* ActionUIEsc = nullptr;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Mapping|Movement Mapping")
 	UInputMappingContext* MovementMappingContent = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Mapping|Interaction Mapping")
 	UInputMappingContext* InteractionMappingContent = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Mapping|UI Actions Mapping")
+	UInputMappingContext* UIActionMappingContent = nullptr;
 
 public:
 	UFUNCTION()
@@ -55,6 +61,12 @@ public:
 
 	UFUNCTION()
 	void DisableMouseCursor();
+
+	UFUNCTION()
+	ASerenityCitadelCharacter* GetPlayerCharacter() 
+	{
+		return PlayerCharacter;
+	};
 
 protected:
 	virtual void OnPossess(APawn* aPawn) override;

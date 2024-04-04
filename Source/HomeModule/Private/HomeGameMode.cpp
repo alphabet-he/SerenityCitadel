@@ -2,8 +2,7 @@
 
 
 #include "HomeGameMode.h"
-#include "ComputerDesktop.h"
-#include "CommissionPage.h"
+#include <Kismet/GameplayStatics.h>
 
 void AHomeGameMode::StartPlay()
 {
@@ -14,4 +13,16 @@ void AHomeGameMode::StartPlay()
 
 	CommissionPageWidget = CreateWidget<UCommissionPage>(GetWorld(), CommissionPageWidgetClass);
 	CommissionPageWidget->RemoveFromParent();
+
+	InTransitWidget = CreateWidget<UInTransitWidget>(GetWorld(), InTransitWidgetClass);
+	InTransitWidget->RemoveFromParent();
+
+	DialogueWidget = CreateWidget<UDialogueWidget>(GetWorld(), DialogueWidgetClass);
+	DialogueWidget->RemoveFromParent();
+
+	PlayerController = Cast<APlayerControllerTest>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	check(PlayerController);
+
+	PlayerCharacter = PlayerController->GetPlayerCharacter();
+	check(PlayerCharacter);
 }

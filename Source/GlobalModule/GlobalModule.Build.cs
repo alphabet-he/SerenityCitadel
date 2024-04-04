@@ -15,7 +15,8 @@ public class GlobalModule : ModuleRules
 			"UMG",
 			"SerenityCitadel",
 			"InputCore",
-			"EnhancedInput"
+			"EnhancedInput",
+			"NinjaCharacter"
 		});
 	}
 }
