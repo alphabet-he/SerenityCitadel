@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/Button.h"
 #include <RobotToRepair.h>
+#include <RobotMinimap.h>
 #include "CommissionButton.generated.h"
 
 
@@ -19,6 +20,9 @@ class UCommissionButton : public UButton
 public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ARobotToRepair> RobotClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ARobotMinimap> RobotMinimapClass;
 
 private:
 	UCommissionButton();

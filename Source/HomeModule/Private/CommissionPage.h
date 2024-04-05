@@ -17,6 +17,7 @@ class APlayerControllerTest;
 class ASerenityCitadelCharacter;
 class UCommissionButton;
 class ARobotToRepair;
+class ARobotMinimap;
 class UMyGameInstanceSubsystem;
 
 UCLASS()
@@ -55,7 +56,7 @@ private:
 
 	ASerenityCitadelCharacter* PlayerCharacter;
 
-	TSubclassOf<ARobotToRepair> currRobotClass = nullptr;
+	UCommissionButton* currCommissionButton = nullptr;
 
 	UMyGameInstanceSubsystem* GameInstanceSubsystem;
 
@@ -64,7 +65,7 @@ private:
 	bool bAccepted = false;
 
 public:
-	void SetCurrRobotClass(TSubclassOf<ARobotToRepair> robotClass);
+	void SetCurrCommissionButton(UCommissionButton* commissionButton);
 
 private:
 	void NativeConstruct() override;

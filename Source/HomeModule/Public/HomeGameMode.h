@@ -9,12 +9,17 @@
 #include "InTransitWidget.h"
 #include "SerenityCitadelCharacter.h"
 #include "DialogueWidget.h"
+#include "ControlPanelWidget.h"
 #include "HomeGameMode.generated.h"
 
 /**
  * 
  */
 
+class UCommissionButton;
+class AMinimapPawn;
+class ARobotMinimap;
+class ARobotToRepair;
 
 UCLASS()
 class HOMEMODULE_API AHomeGameMode : public AGameModeBase
@@ -38,12 +43,16 @@ public:
 	TSubclassOf<UDialogueWidget> DialogueWidgetClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UControlPanelWidget> ControlPanelWidgetClass;
+
+	UPROPERTY(EditAnywhere)
 	FVector RobotSpawnPos;
 
 	UComputerDesktop* DesktopWidget;
 	UCommissionPage* CommissionPageWidget;
 	UInTransitWidget* InTransitWidget;
 	UDialogueWidget* DialogueWidget;
+	UControlPanelWidget* ControlPanelWidget;
 
 	APlayerControllerTest* GetPlayerController() { return PlayerController; }
 	ASerenityCitadelCharacter* GetPlayerCharacter() { return PlayerCharacter; }
@@ -51,4 +60,11 @@ public:
 private:
 	APlayerControllerTest* PlayerController;
 	ASerenityCitadelCharacter* PlayerCharacter;
+
+	AMinimapPawn* minimapPawn;
+	ARobotMinimap* minimap;
+	ARobotToRepair* robotInRepair;
+
+public:
+	void CommissionSpawn(UCommissionButton* commissionButton);
 };

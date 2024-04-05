@@ -9,6 +9,7 @@
 #include "CommissionButton.h"
 #include "RobotToRepair.h"
 #include "MyGameInstanceSubsystem.h"
+#include "RobotMinimap.h"
 
 void UCommissionPage::NativeConstruct()
 {
@@ -81,13 +82,7 @@ void UCommissionPage::AcceptCommission()
 		this->RemoveFromParent();
 		PlayerCharacter->RemoveWidget(this);
 
-		FActorSpawnParameters SpawnParameters;
-		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-		ARobotToRepair* RobotInRepair = GetWorld()->SpawnActor<ARobotToRepair>(
-			currRobotClass, HomeGameMode->RobotSpawnPos, FRotator(90.0f, 0, 0), SpawnParameters);
-
-		GameInstanceSubsystem->RobotInRepair = RobotInRepair;
+		HomeGameMode->CommissionSpawn(currCommissionButton);
 
 		// switch buttons
 		AcceptButton->SetVisibility(ESlateVisibility::Hidden);
@@ -95,6 +90,7 @@ void UCommissionPage::AcceptCommission()
 		CompleteButton->SetVisibility(ESlateVisibility::Visible);
 		WithdrawButton->SetVisibility(ESlateVisibility::Visible);
 		AcceptedStatus->SetVisibility(ESlateVisibility::Visible);
+		bDealt = true;
 
 		FTimerHandle Handle;
 		GetWorld()->GetTimerManager().SetTimer(Handle, this, &UCommissionPage::CommissionAcceptedEnd, 2.0f);
@@ -111,13 +107,13 @@ void UCommissionPage::CommissionAcceptedEnd()
 	PlayerCharacter->ShowEToInteract();
 }
 
-void UCommissionPage::SetCurrRobotClass(TSubclassOf<ARobotToRepair> robotClass)
+void UCommissionPage::SetCurrCommissionButton(UCommissionButton* commissionButton)
 {
-	if (currRobotClass != robotClass) {
-		currRobotClass = robotClass;
+	if (currCommissionButton != commissionButton) {
+		currCommissionButton = commissionButton;
 	}
 	else {
-		currRobotClass = nullptr;
+		currCommissionButton = nullptr;
 	}
 	
 }
