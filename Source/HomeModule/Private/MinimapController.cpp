@@ -2,4 +2,13 @@
 
 
 #include "MinimapController.h"
+#include <EnhancedInputComponent.h>
+#include <EnhancedInputSubsystems.h>
 
+void AMinimapController::OnPossess(APawn* aPawn)
+{
+}
+
+void AMinimapController::OnUnPossess()
+{
+}

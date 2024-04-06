@@ -13,5 +13,9 @@ UCLASS()
 class GLOBALMODULE_API APlayerCharacter : public ASerenityCitadelCharacter
 {
 	GENERATED_BODY()
-	
+
+
+public:
+	// Sets default values for this character's properties
+	APlayerCharacter(const FObjectInitializer& ObjectInitializer);
 };
