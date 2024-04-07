@@ -3,7 +3,6 @@
 
 #include "ControlPanelWidget.h"
 #include "HomeGameMode.h"
-#include "Components/Button.h"
 #include <Kismet/GameplayStatics.h>
 
 void UControlPanelWidget::NativeConstruct()
@@ -31,11 +30,20 @@ void UControlPanelWidget::ClickDispatchButton()
 {
 	RecallButton->SetIsEnabled(true);
 	DispatchButton->SetIsEnabled(false);
+
+	HomeGameMode->SpawnMinimapPawn();
+
+	PlayerController->EnableMovement();
 }
 
 void UControlPanelWidget::ClickRecallButton()
 {
+	HomeGameMode->DestroyMinimapPawn();
+
 	RecallButton->SetIsEnabled(false);
 	DispatchButton->SetIsEnabled(true);
 	ZoomInButton->SetIsEnabled(false);
+
+	PlayerController->DisableMovement();
+	
 }

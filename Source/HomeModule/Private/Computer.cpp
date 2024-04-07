@@ -59,7 +59,7 @@ void AComputer::InteractWithPlayer()
 		}
 
 		PlayerController->DisableMouseCursor();
-		PlayerController->EnableMovement();
+		PlayerController->EnableMovementAndAction();
 
 		EToInteractWidget->SetVisibility(true);
 
@@ -72,7 +72,7 @@ void AComputer::InteractWithPlayer()
 		PlayerCharacter->AddActiveWdiget(HomeGameMode->DesktopWidget);
 
 		PlayerController->EnableMouseCursor();
-		PlayerController->DisableMovement();
+		PlayerController->DisableMovementAndAction();
 
 		EToInteractWidget->SetVisibility(false);
 		

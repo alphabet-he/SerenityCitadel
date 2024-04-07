@@ -13,8 +13,11 @@ public class HomeModule : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"UMG",
-			"GlobalModule",
-			"SerenityCitadel"
+            "InputCore",
+            "EnhancedInput",
+            "GlobalModule",
+            "NinjaCharacter",
+            "SerenityCitadel"
         });
 	}
 }

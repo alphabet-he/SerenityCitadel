@@ -4,7 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "PlayerControllerTest.h"
 #include "MinimapPawn.generated.h"
+
+struct FInputActionValue;
+class UFloatingPawnMovement;
+class UBoxComponent;
 
 UCLASS()
 class HOMEMODULE_API AMinimapPawn : public APawn
@@ -25,5 +30,28 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void HandleMove(const FInputActionValue& Value);
+
+	void SetForwardDirection(FVector v) {
+		ForwardDirection = v;
+	}
+
+	void SetRightDirection(FVector v) {
+		RightDirection = v;
+	}
+
+private:
+	FVector ForwardDirection;
+	FVector RightDirection;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* PawnMesh;
+
+	UPROPERTY(EditAnywhere)
+	UFloatingPawnMovement* MovementComp;
+
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* BoxCollider;
 
 };

@@ -10,7 +10,7 @@
  * 
  */
 class APlayerControllerTest;
-class ASerenityCitadelCharacter;
+class APlayerCharacter;
 class AHomeGameMode;
 
 UCLASS()
@@ -28,7 +28,7 @@ private:
 
 	APlayerControllerTest* PlayerController;
 
-	ASerenityCitadelCharacter* PlayerCharacter;
+	APlayerCharacter* PlayerCharacter;
 
 	AHomeGameMode* HomeGameMode;
 

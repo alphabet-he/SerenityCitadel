@@ -7,6 +7,7 @@
 #include "MinimapPawn.h"
 #include "CommissionButton.h"
 #include "RobotToRepair.h"
+#include "MinimapController.h"
 
 void AHomeGameMode::StartPlay()
 {
@@ -30,8 +31,34 @@ void AHomeGameMode::StartPlay()
 	PlayerController = Cast<APlayerControllerTest>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	check(PlayerController);
 
-	PlayerCharacter = PlayerController->GetPlayerCharacter();
+	PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPlayerCharacter());
 	check(PlayerCharacter);
+
+	//MinimapController = GetWorld()->SpawnActor<AMinimapController>(MinimapControllerClass);
+}
+
+void AHomeGameMode::SpawnMinimapPawn()
+{
+	if (!minimap) return;
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	FVector spawnLoc = minimap->GetPawnSpawnPos();
+
+	minimapPawn = GetWorld()->SpawnActor<AMinimapPawn>(
+		MinimapPawnClass, minimap->GetPawnSpawnPos(), FRotator(0), SpawnParameters);
+	if (minimapPawn) {
+		minimapPawn->SetForwardDirection(minimap->GetForwardDirection());
+		minimapPawn->SetRightDirection(minimap->GetRightDirection());
+		
+		PlayerCharacter->SetControllingMinimapPawn(true);
+		PlayerCharacter->SetControlledMinimapPawn(minimapPawn);
+	}
+	
+	
+
+
 }
 
 void AHomeGameMode::CommissionSpawn(UCommissionButton* commissionButton)
@@ -44,4 +71,14 @@ void AHomeGameMode::CommissionSpawn(UCommissionButton* commissionButton)
 
 	minimap = GetWorld()->SpawnActor<ARobotMinimap>(
 		commissionButton->RobotMinimapClass, FVector(1000.0f, 1000.0f, -3000.0f), FRotator(0), SpawnParameters);
+}
+
+void AHomeGameMode::DestroyMinimapPawn()
+{
+	if (minimapPawn) {
+		minimapPawn->K2_DestroyActor();
+		minimapPawn = nullptr;
+	}
+	PlayerCharacter->SetControllingMinimapPawn(false);
+	PlayerCharacter->SetControlledMinimapPawn(nullptr);
 }

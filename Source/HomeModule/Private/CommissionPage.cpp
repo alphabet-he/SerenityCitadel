@@ -102,7 +102,7 @@ void UCommissionPage::CommissionAcceptedEnd()
 	HomeGameMode->InTransitWidget->RemoveFromParent();
 
 	PlayerController->DisableMouseCursor();
-	PlayerController->EnableMovement();
+	PlayerController->EnableMovementAndAction();
 
 	PlayerCharacter->ShowEToInteract();
 }

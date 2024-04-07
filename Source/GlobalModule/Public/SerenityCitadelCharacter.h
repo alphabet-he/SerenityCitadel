@@ -38,12 +38,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void HandleMove(const FInputActionValue& Value);
-	void HandleLook(const FInputActionValue& Value);
-	void HandleJump();
-	void HandleCrouch();
-	void HandleInteract();
-	void HandleEsc();
+	virtual void HandleMove(const FInputActionValue& Value);
+	virtual void HandleLook(const FInputActionValue& Value);
+	virtual void HandleJump();
+	virtual void HandleCrouch();
+	virtual void HandleInteract();
+	virtual void HandleEsc();
 
 	void AddActiveWdiget(UUserWidget* widget) { ActiveWidgets.Push(widget); }
 	TArray<UUserWidget*> GetActiveWidgets() { return ActiveWidgets; }

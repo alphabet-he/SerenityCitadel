@@ -13,6 +13,8 @@
 class UInputAction;
 class UEnhancedInputComponent;
 class UEnhancedInputLocalPlayerSubsystem;
+class AMinimapPawn;
+class UInputMappingContext;
 
 UCLASS()
 class HOMEMODULE_API AMinimapController : public APlayerController
@@ -20,13 +22,19 @@ class HOMEMODULE_API AMinimapController : public APlayerController
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Movement")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Movement")
 	UInputAction* ActionMove = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Mapping|Movement Mapping")
+	UInputMappingContext* MovementMappingContent = nullptr;
 
 protected:
 	virtual void OnPossess(APawn* aPawn) override;
 
 	virtual void OnUnPossess() override;
+
+	UFUNCTION()
+	void HandleMove(const FInputActionValue& Value);
 
 private:
 	UPROPERTY()
@@ -34,4 +42,9 @@ private:
 
 	UPROPERTY()
 	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = nullptr;
+
+	UPROPERTY()
+	AMinimapPawn* MinimapPawn;
+
+
 };

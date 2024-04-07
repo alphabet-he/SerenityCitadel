@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Button.h"
 #include "ControlPanelWidget.generated.h"
 
 /**
  * 
  */
-class UButton;
 class AHomeGameMode;
 class APlayerControllerTest;
 class ASerenityCitadelCharacter;
@@ -46,4 +46,13 @@ private:
 
 	UFUNCTION()
 	void ClickRecallButton();
+
+public:
+	void EnableZoomInButton() {
+		ZoomInButton->SetIsEnabled(true);
+	};
+
+	void DisableZoomInButton() {
+		ZoomInButton->SetIsEnabled(false);
+	};
 };

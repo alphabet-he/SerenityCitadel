@@ -149,7 +149,7 @@ void ARobotToRepair::ShowDialogue()
 
 	// show widget, disable movement
 	HomeGameMode->DialogueWidget->AddToViewport();
-	PlayerController->DisableMovement();
+	PlayerController->DisableMovementAndAction();
 	HideInteractionWidget();
 
 	FTimerHandle Handle;
@@ -161,7 +161,7 @@ void ARobotToRepair::HideDialogue()
 {
 	HomeGameMode->DialogueWidget->RemoveFromParent();
 	PlayerCharacter->RemoveWidget(HomeGameMode->DialogueWidget);
-	PlayerController->EnableMovement();
+	PlayerController->EnableMovementAndAction();
 	ShowInteractionWidget();
 }
 

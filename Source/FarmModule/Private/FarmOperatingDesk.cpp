@@ -58,7 +58,7 @@ void AFarmOperatingDesk::LeavePlayerInteractionBox()
 	EtoInteractWidget->SetVisibility(false);
 	PlayerController->DisableMouseCursor();
 	//OperatingWidget->SetVisibility(false);
-	PlayerController->EnableMovement();
+	PlayerController->EnableMovementAndAction();
 }
 
 void AFarmOperatingDesk::InteractWithPlayer()
@@ -68,7 +68,7 @@ void AFarmOperatingDesk::InteractWithPlayer()
 		Cast<UOperatingWidget>(OperatingWidget)->SetWidgetToDefault();
 		OperatingWidget->SetVisibility(ESlateVisibility::Collapsed);
 		EtoInteractWidget->SetVisibility(true);
-		PlayerController->EnableMovement();
+		PlayerController->EnableMovementAndAction();
 		OperatingWidgetVisible = false;
 	}
 	else {
@@ -77,7 +77,7 @@ void AFarmOperatingDesk::InteractWithPlayer()
 		//OperatingWidget->SetVisibility(true);
 		OperatingWidget->AddToViewport();
 		OperatingWidget->SetVisibility(ESlateVisibility::Visible);
-		PlayerController->DisableMovement();
+		PlayerController->DisableMovementAndAction();
 		PlayerController->EnableMouseCursor();
 		OperatingWidgetVisible = true;
 	}

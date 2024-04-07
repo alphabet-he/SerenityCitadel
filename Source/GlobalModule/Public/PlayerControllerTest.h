@@ -25,13 +25,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Movement")
 	UInputAction* ActionMove = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Movement")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Action")
 	UInputAction* ActionLook = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Movement")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Action")
 	UInputAction* ActionJump = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Movement")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Action")
 	UInputAction* ActionCrouch = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Interaction")
@@ -43,6 +43,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Mapping|Movement Mapping")
 	UInputMappingContext* MovementMappingContent = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Mapping|Action Mapping")
+	UInputMappingContext* ActionMappingContent = nullptr;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Mapping|Interaction Mapping")
 	UInputMappingContext* InteractionMappingContent = nullptr;
 
@@ -51,10 +54,22 @@ public:
 
 public:
 	UFUNCTION()
+	void DisableMovementAndAction();
+
+	UFUNCTION()
+	void EnableMovementAndAction();
+
+	UFUNCTION()
 	void DisableMovement();
 
 	UFUNCTION()
 	void EnableMovement();
+
+	UFUNCTION()
+	void DisableAction();
+
+	UFUNCTION()
+	void EnableAction();
 
 	UFUNCTION()
 	void EnableMouseCursor();

@@ -56,7 +56,7 @@ void ATeleporter::LeavePlayerInteractionBox()
 	InteractionWidget->SetVisibility(false);
 	PlayerController->DisableMouseCursor();
 	TeleporterWidget->SetVisibility(false);
-	PlayerController->EnableMovement();
+	PlayerController->EnableMovementAndAction();
 }
 
 void ATeleporter::InteractWithPlayer() 
@@ -66,14 +66,14 @@ void ATeleporter::InteractWithPlayer()
 	if (TeleporterWidget->GetVisibleFlag()) {
 		PlayerController->DisableMouseCursor();
 		TeleporterWidget->SetVisibility(false);
-		PlayerController->EnableMovement();
+		PlayerController->EnableMovementAndAction();
 		//PlayerCharacter->EnableInput(PlayerController);
 		//PlayerCharacter->bBlockInput = false;
 	}
 	else {
 		InteractionWidget->SetVisibility(false);
 		TeleporterWidget->SetVisibility(true);
-		PlayerController->DisableMovement();
+		PlayerController->DisableMovementAndAction();
 		PlayerController->EnableMouseCursor();
 		//PlayerCharacter->GetMovementComponent();
 		//DisableInput(PlayerController);

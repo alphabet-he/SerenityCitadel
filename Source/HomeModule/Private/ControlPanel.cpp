@@ -32,9 +32,11 @@ void AControlPanel::InteractWithPlayer()
 		HomeGameMode->ControlPanelWidget->RemoveFromParent();
 		PlayerCharacter->RemoveWidget(HomeGameMode->ControlPanelWidget);
 		PlayerController->DisableMouseCursor();
-		PlayerController->EnableMovement();
+		PlayerController->EnableMovementAndAction();
 
 		EToInteractWidget->SetVisibility(true);
+
+		PlayerCharacter->SetControllingMinimapPawn(false);
 	}
 
 	else {
@@ -42,11 +44,14 @@ void AControlPanel::InteractWithPlayer()
 		HomeGameMode->ControlPanelWidget->AddToViewport();
 		PlayerCharacter->AddActiveWdiget(HomeGameMode->ControlPanelWidget);
 		PlayerController->EnableMouseCursor();
-		PlayerController->DisableMovement();
+		PlayerController->DisableMovementAndAction();
 
 		EToInteractWidget->SetVisibility(false);
 
-		// switch player controller
+		if (HomeGameMode->GetMinimapPawn()) {
+			PlayerCharacter->SetControllingMinimapPawn(true);
+			PlayerController->EnableMovement();
+		}
 
 	}
 }

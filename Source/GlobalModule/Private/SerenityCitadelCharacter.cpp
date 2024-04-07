@@ -116,7 +116,7 @@ void ASerenityCitadelCharacter::HandleEsc()
 		if (ActiveWidgets.Num() == 0) {
 			// if no UI is shown, enable movement
 			PlayerController->DisableMouseCursor();
-			PlayerController->EnableMovement();
+			PlayerController->EnableMovementAndAction();
 
 			ShowEToInteract();
 		}

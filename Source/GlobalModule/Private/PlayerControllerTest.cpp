@@ -37,6 +37,10 @@ void APlayerControllerTest::OnPossess(APawn* aPawn)
 	checkf(MovementMappingContent, TEXT("MovementMappingContext is not defined"));
 	InputSubsystem->AddMappingContext(MovementMappingContent, 0);
 
+	// Bind action mapping context
+	checkf(ActionMappingContent, TEXT("ActionMappingContext is not defined"));
+	InputSubsystem->AddMappingContext(ActionMappingContent, 0);
+
 	// Bind UI mapping context
 	checkf(UIActionMappingContent, TEXT("UIMappingContext is not defined"));
 	InputSubsystem->AddMappingContext(UIActionMappingContent, 0);
@@ -77,14 +81,45 @@ void APlayerControllerTest::OnUnPossess()
 	Super::OnUnPossess();
 }
 
+void APlayerControllerTest::DisableMovementAndAction()
+{
+	DisableMovement();
+	DisableAction();
+	
+}
+
+void APlayerControllerTest::EnableMovementAndAction()
+{
+	EnableMovement();
+	EnableAction();
+}
+
 void APlayerControllerTest::DisableMovement()
 {
-	InputSubsystem->RemoveMappingContext(MovementMappingContent);
+	if (InputSubsystem->HasMappingContext(MovementMappingContent)) {
+		InputSubsystem->RemoveMappingContext(MovementMappingContent);
+	}
 }
 
 void APlayerControllerTest::EnableMovement()
 {
-	InputSubsystem->AddMappingContext(MovementMappingContent, 0);
+	if (!InputSubsystem->HasMappingContext(MovementMappingContent)) {
+		InputSubsystem->AddMappingContext(MovementMappingContent, 0);
+	}
+}
+
+void APlayerControllerTest::DisableAction()
+{
+	if (InputSubsystem->HasMappingContext(ActionMappingContent)) {
+		InputSubsystem->RemoveMappingContext(ActionMappingContent);
+	}
+}
+
+void APlayerControllerTest::EnableAction()
+{
+	if (!InputSubsystem->HasMappingContext(ActionMappingContent)) {
+		InputSubsystem->AddMappingContext(ActionMappingContent, 0);
+	}
 }
 
 void APlayerControllerTest::EnableMouseCursor()

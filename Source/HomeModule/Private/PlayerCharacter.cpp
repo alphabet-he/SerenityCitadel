@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
+#include "MinimapPawn.h"
+
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -45,4 +47,17 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 
 	// can crouch
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+}
+
+void APlayerCharacter::HandleMove(const FInputActionValue& Value)
+{
+	if (ControllingMinimapPawn) {
+		if (ControlledMinimapPawn) {
+			ControlledMinimapPawn->HandleMove(Value);
+		}
+	}
+
+	else {
+		Super::HandleMove(Value);
+	}
 }
