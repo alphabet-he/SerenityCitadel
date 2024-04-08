@@ -97,7 +97,7 @@ void AArmFarmManager::SpawnArmGrids()
 			float y = j * 50;
 			float z = arc * sinf(thetaRadian / 2.0f);
 
-			FVector loc = FVector(x, y, z);
+			FVector loc = FVector(x, y, z) + GridStartPos;
 			FRotator rot = FRotator(-1 * thetaDegree, 0, 0);
 			AFarmingGrid* grid = GetWorld()->SpawnActor<AFarmingGrid>(BP_GridActor, loc, rot, SpawnParameters);
 

@@ -12,7 +12,7 @@
  */
 class AHomeGameMode;
 class APlayerControllerTest;
-class ASerenityCitadelCharacter;
+class APlayerCharacter;
 
 UCLASS()
 class UControlPanelWidget : public UUserWidget
@@ -33,7 +33,7 @@ private:
 
 	APlayerControllerTest* PlayerController;
 
-	ASerenityCitadelCharacter* PlayerCharacter;
+	APlayerCharacter* PlayerCharacter;
 
 private:
 	void NativeConstruct() override;

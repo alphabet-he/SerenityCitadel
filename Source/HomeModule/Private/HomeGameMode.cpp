@@ -71,6 +71,13 @@ void AHomeGameMode::CommissionSpawn(UCommissionButton* commissionButton)
 
 	minimap = GetWorld()->SpawnActor<ARobotMinimap>(
 		commissionButton->RobotMinimapClass, FVector(1000.0f, 1000.0f, -3000.0f), FRotator(0), SpawnParameters);
+
+	LevelToLoad = commissionButton->LevelToLoad;
+	FLatentActionInfo LatentInfo;
+	UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
+
+	MicroRobotCharacter = GetWorld()->SpawnActor<ASerenityCitadelCharacter>(
+		MicroRobotCharacterClass, MicroRobotSpawnPosInFarm, FRotator(0, 0, 0), SpawnParameters);
 }
 
 void AHomeGameMode::DestroyMinimapPawn()
@@ -81,4 +88,14 @@ void AHomeGameMode::DestroyMinimapPawn()
 	}
 	PlayerCharacter->SetControllingMinimapPawn(false);
 	PlayerCharacter->SetControlledMinimapPawn(nullptr);
+}
+
+void AHomeGameMode::SwitchToFarmLevel()
+{
+	if (MicroRobotCharacter) {
+		PlayerController->Possess(MicroRobotCharacter);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Micro robot not spawned"));
+	}
 }

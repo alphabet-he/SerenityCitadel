@@ -50,7 +50,13 @@ public:
 	TSubclassOf<AMinimapPawn> MinimapPawnClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<ASerenityCitadelCharacter> MicroRobotCharacterClass;
+
+	UPROPERTY(EditAnywhere)
 	FVector RobotSpawnPos;
+
+	UPROPERTY(EditAnywhere)
+	FVector MicroRobotSpawnPosInFarm;
 
 	UComputerDesktop* DesktopWidget;
 	UCommissionPage* CommissionPageWidget;
@@ -69,7 +75,11 @@ private:
 	ARobotMinimap* minimap;
 	ARobotToRepair* robotInRepair;
 
+	FName LevelToLoad;
+
 	AMinimapController* MinimapController;
+
+	ASerenityCitadelCharacter* MicroRobotCharacter;
 
 public:
 	void CommissionSpawn(UCommissionButton* commissionButton);
@@ -81,4 +91,6 @@ public:
 	AMinimapPawn* GetMinimapPawn() {
 		return minimapPawn;
 	}
+
+	void SwitchToFarmLevel();
 };
