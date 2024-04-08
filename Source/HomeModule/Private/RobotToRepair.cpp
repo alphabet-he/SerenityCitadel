@@ -20,6 +20,14 @@ void ARobotToRepair::BeginPlay()
 
 void ARobotToRepair::InteractWithPlayer()
 {
+	if (!PlayerCharacter) {
+		PlayerCharacter = HomeGameMode->GetPlayerCharacter();
+	}
+
+	if (!PlayerController) {
+		PlayerController = HomeGameMode->GetPlayerController();
+	}
+
 	if (!bCanInteract) return;
 	if (!HomeGameMode->DialogueWidget) return;
 
@@ -27,13 +35,14 @@ void ARobotToRepair::InteractWithPlayer()
 		HideDialogue();
 	}
 	else {
+		SetDialogue();
 		ShowDialogue();
 	}
 
 	
 }
 
-void ARobotToRepair::ShowDialogue()
+void ARobotToRepair::SetDialogue()
 {
 	bCanInteract = false;
 
@@ -44,6 +53,15 @@ void ARobotToRepair::ShowDialogue()
 	/*
 	* set dialogues
 	*/ 
+
+	// if there is priority dialogues
+	if (PriorityPairedDialogues.StringArray.Num() > 0) {
+		HomeGameMode->DialogueWidget->SetPlayerDialogue(PriorityPairedDialogues.StringArray[0]);
+		HomeGameMode->DialogueWidget->SetTargetDialogue(PriorityPairedDialogues.StringArray[1]);
+		PriorityPairedDialogues.StringArray.Empty();
+		return;
+	}
+
 
 	// after fixed
 	if (bRepaired) {
@@ -134,6 +152,9 @@ void ARobotToRepair::ShowDialogue()
 
 	}
 
+}
+
+void ARobotToRepair::ShowDialogue() {
 	/*
 	* show dialogues
 	*/
@@ -154,7 +175,6 @@ void ARobotToRepair::ShowDialogue()
 
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &ARobotToRepair::ShowSecondDialogue, 1.0f);
-
 }
 
 void ARobotToRepair::HideDialogue()

@@ -27,6 +27,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	FName LevelToLoad;
 
+	UPROPERTY(EditAnywhere)
+	FStringArray DialogueWithMainRobotBeforeFix;
+
+	UPROPERTY(EditAnywhere)
+	FStringArray DialogueWithMainRobotAfterFix;
+
 private:
 	UCommissionButton();
 

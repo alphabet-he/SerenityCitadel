@@ -9,6 +9,7 @@
 #include "RobotToRepair.h"
 #include "MyGameInstanceSubsystem.h"
 #include "MinimapController.h"
+#include "MainRobot.h"
 
 void AHomeGameMode::StartPlay()
 {
@@ -41,6 +42,9 @@ void AHomeGameMode::StartPlay()
 	check(MyGameInstanceSubsystem);
 
 	MyGameInstanceSubsystem->PlayerCharacter = PlayerCharacter;
+
+	MainRobot = Cast<AMainRobot>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainRobot::StaticClass()));
+	check(MainRobot);
 }
 
 void AHomeGameMode::SpawnMinimapPawn()
@@ -90,6 +94,8 @@ void AHomeGameMode::CommissionSpawn(UCommissionButton* commissionButton)
 	if (MicroRobotCharacter) {
 		MyGameInstanceSubsystem->MicroRobotList.Add(LevelToLoad, MicroRobotCharacter);
 	}
+
+	MainRobot->SetPriorityDialogue(commissionButton->DialogueWithMainRobotBeforeFix);
 }
 
 void AHomeGameMode::DestroyMinimapPawn()

@@ -27,6 +27,9 @@ protected:
 	FString Name;
 
 	UPROPERTY(EditAnywhere)
+	FStringArray PriorityPairedDialogues;
+
+	UPROPERTY(EditAnywhere)
 	TArray<FString> PlayerDialoguesBeforeFixed;
 
 	UPROPERTY(EditAnywhere)
@@ -62,6 +65,8 @@ private:
 private:
 	virtual void InteractWithPlayer() override;
 
+	void SetDialogue();
+	
 	void ShowDialogue();
 
 	void HideDialogue();
@@ -72,5 +77,10 @@ private:
 
 	UFUNCTION()
 	void ShowSecondDialogue();
+
+public:
+	void SetPriorityDialogue(FStringArray dialogues){
+		PriorityPairedDialogues = dialogues;
+	}
 
 };

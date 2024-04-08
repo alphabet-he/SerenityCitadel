@@ -22,6 +22,7 @@ class ARobotMinimap;
 class ARobotToRepair;
 class AMinimapController;
 class UMyGameInstanceSubsystem;
+class AMainRobot;
 
 UCLASS()
 class HOMEMODULE_API AHomeGameMode : public AGameModeBase
@@ -73,6 +74,10 @@ public:
 
 	FName GetCurrFarmLevelName() { return LevelToLoad; }
 
+	AMainRobot* GetMainRobot() {
+		return MainRobot;
+	}
+
 
 private:
 	APlayerControllerTest* PlayerController;
@@ -85,6 +90,8 @@ private:
 	FName LevelToLoad;
 
 	UMyGameInstanceSubsystem* MyGameInstanceSubsystem;
+
+	AMainRobot* MainRobot = nullptr;
 
 public:
 	void CommissionSpawn(UCommissionButton* commissionButton);
