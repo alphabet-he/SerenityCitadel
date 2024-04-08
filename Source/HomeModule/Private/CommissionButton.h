@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ARobotMinimap> RobotMinimapClass;
 
+	UPROPERTY(EditAnywhere)
+	FName LevelToLoad;
+
 private:
 	UCommissionButton();
 

@@ -18,12 +18,21 @@ void UControlPanelWidget::NativeConstruct()
 
 	PlayerController = HomeGameMode->GetPlayerController();
 
-	PlayerCharacter = HomeGameMode->GetPlayerCharacter();
+	PlayerCharacter = Cast<APlayerCharacter>(HomeGameMode->GetPlayerCharacter());
 }
 
 void UControlPanelWidget::ClickZoomInButton()
 {
+	this->RemoveFromParent();
+	PlayerCharacter->RemoveWidget(this);
+	PlayerController->DisableMouseCursor();
+	PlayerController->EnableMovementAndAction();
 
+	PlayerCharacter->ShowEToInteract();
+
+	PlayerCharacter->SetControllingMinimapPawn(false);
+
+	HomeGameMode->SwitchToFarmLevel();
 }
 
 void UControlPanelWidget::ClickDispatchButton()

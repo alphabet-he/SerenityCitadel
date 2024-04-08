@@ -42,6 +42,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float PlantGrowthPollutionThreshold = 0.2f;
 
+	UPROPERTY(EditAnywhere)
+	FVector GridStartPos;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void GenerateGeometry(
