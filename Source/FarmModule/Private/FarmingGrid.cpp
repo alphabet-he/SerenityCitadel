@@ -2,6 +2,7 @@
 
 
 #include "FarmingGrid.h"
+#include <Components/ArrowComponent.h>
 
 
 // Sets default values
@@ -16,6 +17,9 @@ AFarmingGrid::AFarmingGrid()
 
 	GridMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Grid Mesh"));
 	GridMesh->SetupAttachment(RootComponent);
+
+	PlantMark = CreateDefaultSubobject<UArrowComponent>(TEXT("Plant Growth Mark"));
+	PlantMark->SetupAttachment(RootComponent);
 	
 }
 

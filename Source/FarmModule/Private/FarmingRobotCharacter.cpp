@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MicroRobotCharacter.h"
+#include "FarmingRobotCharacter.h"
 #include "NinjaCharacterMovementComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
@@ -9,8 +9,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
+#include "MyGameInstanceSubsystem.h"
 
-AMicroRobotCharacter::AMicroRobotCharacter(const FObjectInitializer& ObjectInitializer)
+AFarmingRobotCharacter::AFarmingRobotCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	// set up character 
@@ -61,7 +62,41 @@ AMicroRobotCharacter::AMicroRobotCharacter(const FObjectInitializer& ObjectIniti
 	UNinjaCharacterMovementComponent* MovementComp = Cast<UNinjaCharacterMovementComponent>(GetMovementComponent());
 	MovementComp->bAlignComponentToFloor = true;
 
+	// set character type
+	CharacterType = ECharacterType::FARMER;
 
+}
+
+void AFarmingRobotCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	MyGameInstanceSubsystem = Cast<UMyGameInstanceSubsystem>(
+		GetWorld()->GetGameInstance()->GetSubsystem<UMyGameInstanceSubsystem>()
+	);
+	check(MyGameInstanceSubsystem);
+}
+
+void AFarmingRobotCharacter::HandleExitFarm()
+{
+	MyGameInstanceSubsystem->SwitchToHome();
+}
+
+void AFarmingRobotCharacter::HandleSwitchProp()
+{
+	int ind = AvailableStates.IndexOfByKey(CurrFarmingState);
+	ind++;
+	if (ind == AvailableStates.Num()) {
+		ind = 0;
+	}
+	CurrFarmingState = AvailableStates[ind];
+
+	UpdateState();
+}
+
+void AFarmingRobotCharacter::UpdateState()
+{
+	FString s = StaticEnum<EFarmingState>()->GetNameByValue(static_cast<int>(CurrFarmingState)).ToString();
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *s);
 }
 
 

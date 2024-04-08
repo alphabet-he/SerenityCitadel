@@ -7,6 +7,7 @@
 #include "MinimapPawn.h"
 #include "CommissionButton.h"
 #include "RobotToRepair.h"
+#include "MyGameInstanceSubsystem.h"
 #include "MinimapController.h"
 
 void AHomeGameMode::StartPlay()
@@ -34,7 +35,12 @@ void AHomeGameMode::StartPlay()
 	PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPlayerCharacter());
 	check(PlayerCharacter);
 
-	//MinimapController = GetWorld()->SpawnActor<AMinimapController>(MinimapControllerClass);
+	MyGameInstanceSubsystem = Cast<UMyGameInstanceSubsystem>(
+		GetWorld()->GetGameInstance()->GetSubsystem<UMyGameInstanceSubsystem>()
+	);
+	check(MyGameInstanceSubsystem);
+
+	MyGameInstanceSubsystem->PlayerCharacter = PlayerCharacter;
 }
 
 void AHomeGameMode::SpawnMinimapPawn()
@@ -68,6 +74,7 @@ void AHomeGameMode::CommissionSpawn(UCommissionButton* commissionButton)
 
 	robotInRepair = GetWorld()->SpawnActor<ARobotToRepair>(
 		commissionButton->RobotClass, RobotSpawnPos, FRotator(90.0f, 0, 0), SpawnParameters);
+	MyGameInstanceSubsystem->RobotInRepair = robotInRepair;
 
 	minimap = GetWorld()->SpawnActor<ARobotMinimap>(
 		commissionButton->RobotMinimapClass, FVector(1000.0f, 1000.0f, -3000.0f), FRotator(0), SpawnParameters);
@@ -76,8 +83,13 @@ void AHomeGameMode::CommissionSpawn(UCommissionButton* commissionButton)
 	FLatentActionInfo LatentInfo;
 	UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
 
-	MicroRobotCharacter = GetWorld()->SpawnActor<ASerenityCitadelCharacter>(
+	ASerenityCitadelCharacter* MicroRobotCharacter = GetWorld()->SpawnActor<ASerenityCitadelCharacter>(
 		MicroRobotCharacterClass, MicroRobotSpawnPosInFarm, FRotator(0, 0, 0), SpawnParameters);
+
+
+	if (MicroRobotCharacter) {
+		MyGameInstanceSubsystem->MicroRobotList.Add(LevelToLoad, MicroRobotCharacter);
+	}
 }
 
 void AHomeGameMode::DestroyMinimapPawn()
@@ -88,14 +100,4 @@ void AHomeGameMode::DestroyMinimapPawn()
 	}
 	PlayerCharacter->SetControllingMinimapPawn(false);
 	PlayerCharacter->SetControlledMinimapPawn(nullptr);
-}
-
-void AHomeGameMode::SwitchToFarmLevel()
-{
-	if (MicroRobotCharacter) {
-		PlayerController->Possess(MicroRobotCharacter);
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Micro robot not spawned"));
-	}
 }

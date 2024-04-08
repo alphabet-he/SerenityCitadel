@@ -19,6 +19,15 @@ class IInteractionInterface;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
+UENUM(BlueprintType)
+enum class ECharacterType : uint8 {
+	Count = 4 UMETA(DisplayName = "Count for the enum class"),
+	BASE = 0 UMETA(DisplayName = "BASE"), 
+	PLAYER = 1     UMETA(DisplayName = "PLAYER"),
+	FARMER = 2	UMETA(DisplayName = "FARMER"),
+	SOLDIER = 3	UMETA(DisplayName = "SOLDIER")
+};
+
 UCLASS(config = Game)
 class GLOBALMODULE_API ASerenityCitadelCharacter : public ANinjaCharacter
 {
@@ -45,6 +54,10 @@ public:
 	virtual void HandleInteract();
 	virtual void HandleEsc();
 
+	// farm actions, defined in AFarmingRobotCharacter
+	virtual void HandleExitFarm();
+	virtual void HandleSwitchProp();
+
 	void AddActiveWdiget(UUserWidget* widget) { ActiveWidgets.Push(widget); }
 	TArray<UUserWidget*> GetActiveWidgets() { return ActiveWidgets; }
 	UUserWidget* GetWidgetOnTop() { return ActiveWidgets.Top(); }
@@ -58,6 +71,8 @@ public:
 
 	void ShowEToInteract();
 
+	ECharacterType CharacterType = ECharacterType::BASE;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* InteractionBox;
@@ -70,6 +85,8 @@ protected:
 	TArray<UUserWidget*> ActiveWidgets;
 
 	APlayerControllerTest* PlayerController;
+
+
 
 protected:
 

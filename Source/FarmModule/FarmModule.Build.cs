@@ -16,7 +16,10 @@ public class FarmModule : ModuleRules
 			"Slate", 
 			"SlateCore",
 			"GlobalModule",
-			"SerenityCitadel"
+			"SerenityCitadel",
+            "InputCore",
+            "EnhancedInput",
+            "NinjaCharacter"
         });
 	}
 }

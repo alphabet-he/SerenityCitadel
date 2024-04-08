@@ -58,8 +58,6 @@ private:
 
 	UCommissionButton* currCommissionButton = nullptr;
 
-	UMyGameInstanceSubsystem* GameInstanceSubsystem;
-
 	// for a list of commissions, make these two bool into array
 	bool bDealt = false;
 	bool bAccepted = false;

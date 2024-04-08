@@ -6,6 +6,7 @@
 #include "NoiseMapParams.h"
 #include "FarmModuleEnums.h"
 #include "Plant.h"
+#include <Components/ArrowComponent.h>
 
 // Sets default values
 ACommonFarmManager::ACommonFarmManager()
@@ -148,7 +149,7 @@ void ACommonFarmManager::SpawnRandomPlant(FCoordinate2D loc)
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	APlant* spawnedPlant = GetWorld()->SpawnActor<APlant>(NaturalPlants[rndInd],
-		grid->GetActorLocation(), grid->GetActorRotation(),
+		grid->PlantMark->GetComponentLocation(), grid->PlantMark->GetComponentRotation(),
 		SpawnParameters);
 
 	if (spawnedPlant) {

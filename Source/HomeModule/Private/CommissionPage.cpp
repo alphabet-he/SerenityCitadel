@@ -24,11 +24,6 @@ void UCommissionPage::NativeConstruct()
 	PlayerController = HomeGameMode->GetPlayerController();
 
 	PlayerCharacter = HomeGameMode->GetPlayerCharacter();
-
-	GameInstanceSubsystem = Cast<UMyGameInstanceSubsystem>(
-		GetWorld()->GetGameInstance()->GetSubsystem<UMyGameInstanceSubsystem>()
-	);
-	check(GameInstanceSubsystem);
 }
 
 void UCommissionPage::ClickCommissionDetail()
@@ -93,7 +88,8 @@ void UCommissionPage::AcceptCommission()
 		bDealt = true;
 
 		FTimerHandle Handle;
-		GetWorld()->GetTimerManager().SetTimer(Handle, this, &UCommissionPage::CommissionAcceptedEnd, 2.0f);
+		GetWorld()->GetTimerManager().SetTimer(Handle, this, &UCommissionPage::CommissionAcceptedEnd, 1.0f);
+		//CommissionAcceptedEnd();
 	}
 }
 

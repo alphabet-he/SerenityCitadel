@@ -123,6 +123,14 @@ void ASerenityCitadelCharacter::HandleEsc()
 	}
 }
 
+void ASerenityCitadelCharacter::HandleExitFarm()
+{
+}
+
+void ASerenityCitadelCharacter::HandleSwitchProp()
+{
+}
+
 void ASerenityCitadelCharacter::PauseGame()
 {
 }

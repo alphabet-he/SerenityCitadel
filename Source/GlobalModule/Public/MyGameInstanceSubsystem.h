@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "SerenityCitadelCharacter.h"
 #include "MyGameInstanceSubsystem.generated.h"
 
 /**
@@ -23,6 +24,9 @@ private:
 	};
 
 public:
+
+	void Initialize(FSubsystemCollectionBase& Collection) override;
+
 	UFUNCTION(BlueprintCallable)
 	FDateTime GetDate() { return Date; }
 
@@ -41,4 +45,14 @@ public:
 	}
 
 	AActor* RobotInRepair = nullptr;
+
+	APlayerControllerTest* PlayerController = nullptr;
+
+	ASerenityCitadelCharacter* PlayerCharacter = nullptr;
+
+	TMap<FName, ASerenityCitadelCharacter*> MicroRobotList;
+
+	void SwitchToFarmLevel(FName levelName);
+
+	void SwitchToHome();
 };

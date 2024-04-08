@@ -9,7 +9,7 @@
 #include "FarmModuleEnums.h"
 #include "FarmingGrid.generated.h"
 
-
+class UArrowComponent;
 UCLASS()
 class FARMMODULE_API AFarmingGrid : public AActor
 {
@@ -21,6 +21,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* GridMesh = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	UArrowComponent* PlantMark = nullptr;
 
 private:
 	UPROPERTY() 

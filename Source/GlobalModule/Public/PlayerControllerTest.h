@@ -21,7 +21,7 @@ UCLASS()
 class GLOBALMODULE_API APlayerControllerTest : public APlayerController
 {
 	GENERATED_BODY()
-public:
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Movement")
 	UInputAction* ActionMove = nullptr;
 
@@ -88,7 +88,7 @@ protected:
 
 	virtual void OnUnPossess() override;
 
-private:
+protected:
 	UPROPERTY()
 	UEnhancedInputComponent* EnhancedInputComponent = nullptr;
 

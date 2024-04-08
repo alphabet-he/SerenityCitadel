@@ -4,6 +4,7 @@
 #include "ControlPanelWidget.h"
 #include "HomeGameMode.h"
 #include <Kismet/GameplayStatics.h>
+#include "MyGameInstanceSubsystem.h"
 
 void UControlPanelWidget::NativeConstruct()
 {
@@ -32,7 +33,8 @@ void UControlPanelWidget::ClickZoomInButton()
 
 	PlayerCharacter->SetControllingMinimapPawn(false);
 
-	HomeGameMode->SwitchToFarmLevel();
+	HomeGameMode->GetMyGameInstanceSubsystem()->SwitchToFarmLevel(HomeGameMode->GetCurrFarmLevelName());
+	
 }
 
 void UControlPanelWidget::ClickDispatchButton()

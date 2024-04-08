@@ -21,6 +21,7 @@ class AMinimapPawn;
 class ARobotMinimap;
 class ARobotToRepair;
 class AMinimapController;
+class UMyGameInstanceSubsystem;
 
 UCLASS()
 class HOMEMODULE_API AHomeGameMode : public AGameModeBase
@@ -66,6 +67,12 @@ public:
 
 	APlayerControllerTest* GetPlayerController() { return PlayerController; }
 	APlayerCharacter* GetPlayerCharacter() { return PlayerCharacter; }
+	UMyGameInstanceSubsystem* GetMyGameInstanceSubsystem() {
+		return MyGameInstanceSubsystem;
+	}
+
+	FName GetCurrFarmLevelName() { return LevelToLoad; }
+
 
 private:
 	APlayerControllerTest* PlayerController;
@@ -77,9 +84,7 @@ private:
 
 	FName LevelToLoad;
 
-	AMinimapController* MinimapController;
-
-	ASerenityCitadelCharacter* MicroRobotCharacter;
+	UMyGameInstanceSubsystem* MyGameInstanceSubsystem;
 
 public:
 	void CommissionSpawn(UCommissionButton* commissionButton);
@@ -92,5 +97,4 @@ public:
 		return minimapPawn;
 	}
 
-	void SwitchToFarmLevel();
 };

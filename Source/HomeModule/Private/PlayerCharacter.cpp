@@ -47,6 +47,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 
 	// can crouch
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	CharacterType = ECharacterType::PLAYER;
 }
 
 void APlayerCharacter::HandleMove(const FInputActionValue& Value)
