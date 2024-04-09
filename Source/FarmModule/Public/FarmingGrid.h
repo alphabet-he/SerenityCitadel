@@ -10,6 +10,7 @@
 #include "FarmingGrid.generated.h"
 
 class UArrowComponent;
+
 UCLASS()
 class FARMMODULE_API AFarmingGrid : public AActor
 {
@@ -26,8 +27,6 @@ public:
 	UArrowComponent* PlantMark = nullptr;
 
 private:
-	UPROPERTY() 
-	AGroundEntity* EntityAbove = nullptr;
 	
 	UPROPERTY()
 	UFarmingSubsystem* FarmingSubsystem = nullptr;
@@ -38,21 +37,24 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	int gridType = -1;
+public:
+	EGridType GridType = EGridType::UNDEFINED;
 
 	bool bPolluted = false;
 
 	float PollutionPercent = 0;
 
+	float MoisturePercentage = 0;
+
+	float Height = 0;
+
+	bool bDigged = false;
+
+	AGroundEntity* EntityAbove = nullptr;
+
 public:	
 
-	void setPlant(AGroundEntity* plantPtr) { EntityAbove = plantPtr; };
-
-	AGroundEntity* getPlant() { return EntityAbove; };
-
-	void setGridType(GridType i) { gridType = static_cast<int>(i); };
-
-	int getGridType() { return gridType; };
+	void setGridType(EGridType i) { GridType = i; };
 
 	void UpdateGrid();
 
@@ -60,16 +62,8 @@ public:
 
 	void UpdateGrid(UMaterialInstance* material);
 
-	void SetPolluted(UMaterial* material);
+	void UpdatePolluted(UMaterial* material);
 
 	void ClearPolluted();
-
-	FORCEINLINE void SetPollutionPercent(float percent) {
-		PollutionPercent = percent;
-	}
-
-	FORCEINLINE float GetPollutionPercent() {
-		return PollutionPercent;
-	}
 
 };

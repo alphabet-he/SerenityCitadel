@@ -51,11 +51,11 @@ public:
 		FNoiseMapParams HeightMapParams, // grid scale-z
 		FNoiseMapParams MoistureMapParams, // from 0 to 1
 		FNoiseMapParams PollutionMapParams, // from 0 to 1
-		float SandMoistureThreshold, // less than moisture
-		float WaterMoistureThreshold, // greater than moisture
-		float WaterHeightThreshold, // lower than moisture
-		float PollutionThreshold, // larger than pollution
-		float PlantGrowthProb // natural plants
+		float sandMoistureThreshold, // less than moisture
+		float waterMoistureThreshold, // greater than moisture
+		float waterHeightThreshold, // lower than moisture
+		float pollutionThreshold, // larger than pollution
+		float plantGrowthProb // natural plants
 	);
 
 private:

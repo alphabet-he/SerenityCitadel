@@ -21,11 +21,16 @@ void AArmFarmManager::BeginPlay()
 
 void AArmFarmManager::GenerateGeometry(FNoiseMapParams HeightMapParams, 
 	FNoiseMapParams MoistureMapParams, FNoiseMapParams PollutionMapParams, 
-	float SandMoistureThreshold, 
-	float WaterMoistureThreshold, float WaterHeightThreshold, 
-	float PollutionThreshold, 
-	float PlantGrowthProb)
+	float sandMoistureThreshold, 
+	float waterMoistureThreshold, float waterHeightThreshold, 
+	float pollutionThreshold, 
+	float plantGrowthProb)
 {
+	this->SandMoistureThreshold = sandMoistureThreshold;
+	this->WaterMoistureThreshold = waterMoistureThreshold;
+	this->WaterHeightThreshold = waterHeightThreshold;
+	this->PollutionThreshold = pollutionThreshold;
+
 	TArray2D<float> heightMap = GeneratePerlinNoiseMap(CycleNum, GridCountPerCycle, HeightMapParams);
 	TArray2D<float> moistureMap = GeneratePerlinNoiseMap(CycleNum, GridCountPerCycle, HeightMapParams);
 	TArray2D<float> pollutionMap = GeneratePerlinNoiseMap(CycleNum, GridCountPerCycle, HeightMapParams);
@@ -39,24 +44,25 @@ void AArmFarmManager::GenerateGeometry(FNoiseMapParams HeightMapParams,
 
 			// whether is sand
 			if (moistureMap.GetElement(i, j) < SandMoistureThreshold) {
-				GridTypeMap.SetElement(i, j, static_cast<int>(GridType::SAND));
+				GridTypeMap.SetElement(i, j, static_cast<int>(EGridType::SAND));
 			}
 
 			// whether is water
 			if (moistureMap.GetElement(i, j) > WaterMoistureThreshold &&
 				moistureMap.GetElement(i, j) < WaterHeightThreshold) {
-				GridTypeMap.SetElement(i, j, static_cast<int>(GridType::WATER));
+				GridTypeMap.SetElement(i, j, static_cast<int>(EGridType::WATER));
 			}
 
 			// update types and material
 			UpdateAllGrids();
 
 			// pollution
-			GridPtrMap.GetElement(i, j)->SetPollutionPercent(pollutionMap.GetElement(i, j));
+			GridPtrMap.GetElement(i, j)->PollutionPercent = pollutionMap.GetElement(i, j);
 			if (pollutionMap.GetElement(i, j) > PollutionThreshold) {
 
 				// do something with the material
-				GridPtrMap.GetElement(i, j)->SetPolluted(PollutedMaterial);
+				GridPtrMap.GetElement(i, j)->bPolluted = true;
+				GridPtrMap.GetElement(i, j)->UpdatePolluted(PollutedMaterial);
 
 			}
 
@@ -67,7 +73,7 @@ void AArmFarmManager::GenerateGeometry(FNoiseMapParams HeightMapParams,
 				moistureMap.GetElement(i, j) > PlantGrowthMoistureThreshold) {
 				
 				float rnd = FMath::FRandRange(0.0, 1.0);
-				if (rnd < PlantGrowthProb) {
+				if (rnd < plantGrowthProb) {
 					SpawnRandomPlant(FCoordinate2D{ i, j });
 				}
 			}
@@ -85,6 +91,7 @@ void AArmFarmManager::SpawnArmGrids()
 
 	GridTypeMap.Init(CycleNum, GridCountPerCycle, -1);
 	GridPtrMap.Init(CycleNum, GridCountPerCycle, nullptr);
+	GridLocationMap.Init(CycleNum, GridCountPerCycle, FVector{0, 0, 0 });
 
 	for (int j = 0; j < CycleNum; j++) {
 		for (int i = 0; i < GridCountPerCycle; i++) {
@@ -103,7 +110,7 @@ void AArmFarmManager::SpawnArmGrids()
 
 			if (grid) {
 				GridPtrMap.SetElement(j, i, grid);
-				LocationGridMap.Add(loc, grid);
+				GridLocationMap.SetElement(j, i, loc);
 				GridTypeMap.SetElement(j, i, 0);
 			}
 		}

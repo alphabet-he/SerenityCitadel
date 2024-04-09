@@ -9,7 +9,7 @@ AFarmingSubsystemController::AFarmingSubsystemController()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-	GridTextures.Init(nullptr, static_cast<int>(GridType::Count));
+	GridTextures.Init(nullptr, static_cast<int>(EGridType::Count));
 }
 
 // Called when the game starts or when spawned

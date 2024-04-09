@@ -14,27 +14,27 @@ void UFarmingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	// soil transition mappings
 	FGridTransitionWrapper SoilWrapper;
-	SoilWrapper._GridType = GridType::SOIL;
+	SoilWrapper._GridType = EGridType::SOIL;
 	SoilWrapper.OperationNum = 2;
-	SoilWrapper.OperationMapping.Add(GridOperation::CULTIVATE, GridType::FARMLAND);
-	SoilWrapper.OperationMapping.Add(GridOperation::DIG, GridType::PIT);
+	SoilWrapper.OperationMapping.Add(GridOperation::CULTIVATE, EGridType::FARMLAND);
+	SoilWrapper.OperationMapping.Add(GridOperation::DIG, EGridType::PIT);
 
 	// water transition mappings
 	FGridTransitionWrapper WaterWrapper;
-	WaterWrapper._GridType = GridType::WATER;
+	WaterWrapper._GridType = EGridType::WATER;
 	WaterWrapper.OperationNum = 1;
-	WaterWrapper.OperationMapping.Add(GridOperation::FILL, GridType::SOIL);
+	WaterWrapper.OperationMapping.Add(GridOperation::FILL, EGridType::SOIL);
 
 	// rock transition mappings
 	FGridTransitionWrapper RockWrapper;
-	RockWrapper._GridType = GridType::ROCK;
+	RockWrapper._GridType = EGridType::ROCK;
 	RockWrapper.OperationNum = 1;
-	RockWrapper.OperationMapping.Add(GridOperation::REMOVE, GridType::UNDEFINED);
+	RockWrapper.OperationMapping.Add(GridOperation::REMOVE, EGridType::UNDEFINED);
 
 	// grid transition mappings
-	GridTransitionMapping.Add(GridType::SOIL, SoilWrapper);
-	GridTransitionMapping.Add(GridType::WATER, WaterWrapper);
-	GridTransitionMapping.Add(GridType::ROCK, RockWrapper);
+	GridTransitionMapping.Add(EGridType::SOIL, SoilWrapper);
+	GridTransitionMapping.Add(EGridType::WATER, WaterWrapper);
+	GridTransitionMapping.Add(EGridType::ROCK, RockWrapper);
 }
 
 
@@ -87,16 +87,16 @@ void UFarmingSubsystem::SpawnGrid(const FVector p1, const FVector p2,
 			AFarmingGrid* NewFarmingGrid = GetWorld()->SpawnActor<AFarmingGrid>(BP_GridActor, SpawnLocation, SpawnRotation, spawnParams);
 			if (NewFarmingGrid) {
 				if (moistureMap.GetElement(x_count, y_count) < sandMoistureThreshold && temperatureMap.GetElement(x_count, y_count) > sandTemperatureThreshold) {
-					GridMap.SetElement(x_count, y_count, static_cast<int>(GridType::SAND));
-					NewFarmingGrid->setGridType(GridType::SAND);
+					GridMap.SetElement(x_count, y_count, static_cast<int>(EGridType::SAND));
+					NewFarmingGrid->setGridType(EGridType::SAND);
 				}
 				else if (moistureMap.GetElement(x_count, y_count) > waterMoistureThreshold && heightMap.GetElement(x_count, y_count) < waterHeightThreshold) {
-					GridMap.SetElement(x_count, y_count, static_cast<int>(GridType::WATER));
-					NewFarmingGrid->setGridType(GridType::WATER);
+					GridMap.SetElement(x_count, y_count, static_cast<int>(EGridType::WATER));
+					NewFarmingGrid->setGridType(EGridType::WATER);
 				}
 				else {
-					GridMap.SetElement(x_count, y_count, static_cast<int>(GridType::SOIL));
-					NewFarmingGrid->setGridType(GridType::SOIL);
+					GridMap.SetElement(x_count, y_count, static_cast<int>(EGridType::SOIL));
+					NewFarmingGrid->setGridType(EGridType::SOIL);
 				}
 				GridPtrs.SetElement(x_count, y_count, NewFarmingGrid);
 				NewFarmingGrid->UpdateGrid();
@@ -112,9 +112,9 @@ void UFarmingSubsystem::SpawnGrid(const FVector p1, const FVector p2,
 		for (int i = 0; i < rockNum; i++) {
 			int rowInd = FMath::RandRange(0, x_size - 1);
 			int columnInd = FMath::RandRange(0, y_size - 1);
-			if (GridMap.GetElement(rowInd, columnInd) != static_cast<int>(GridType::ROCK)) {
-				GridMap.SetElement(rowInd, columnInd, static_cast<int>(GridType::ROCK));
-				GridPtrs.GetElement(rowInd, columnInd)->setGridType(GridType::ROCK);
+			if (GridMap.GetElement(rowInd, columnInd) != static_cast<int>(EGridType::ROCK)) {
+				GridMap.SetElement(rowInd, columnInd, static_cast<int>(EGridType::ROCK));
+				GridPtrs.GetElement(rowInd, columnInd)->setGridType(EGridType::ROCK);
 				GridPtrs.GetElement(rowInd, columnInd)->UpdateGrid();
 			}
 		}
@@ -315,14 +315,14 @@ void UFarmingSubsystem::GenerateRiver(
 	for (int i = riverExpandMargin; i < river_y_size - riverExpandMargin; i++) {
 		for (int j = riverExpandMargin; j < river_x_size - riverExpandMargin; j++) {
 			if (RiverMap.GetElement(i, j)) {
-				GridMap.SetElement(i - riverExpandMargin, j - riverExpandMargin, static_cast<int>(GridType::WATER));
+				GridMap.SetElement(i - riverExpandMargin, j - riverExpandMargin, static_cast<int>(EGridType::WATER));
 			}
 			
 		}
 	}
 
 	// update grid map
-	UpdateGridsFromTypes(TArray<GridType>{GridType::SOIL, GridType::SAND});
+	UpdateGridsFromTypes(TArray<EGridType>{EGridType::SOIL, EGridType::SAND});
 
 }
 
@@ -384,7 +384,7 @@ void UFarmingSubsystem::GenerateSandArea(
 
 	for (int i = x_sand_min; i <= x_sand_max; i++) {
 		for (int j = y_sand_min; j <= y_sand_max; j++) {
-			GridMap.SetElement(i, j, static_cast<int>(GridType::SAND));
+			GridMap.SetElement(i, j, static_cast<int>(EGridType::SAND));
 		}
 	}
 	
@@ -408,7 +408,7 @@ void UFarmingSubsystem::GenerateSandArea(
 		ModifyEdgePoint(x_sand_min, i, boundaryIncProb, boundaryDecProb);
 	}
 
-	UpdateGridsFromTypes(TArray<GridType>{GridType::SOIL});
+	UpdateGridsFromTypes(TArray<EGridType>{EGridType::SOIL});
 
 }
 
@@ -420,7 +420,7 @@ void UFarmingSubsystem::ModifyEdgePoint(int x, int y, float boundaryIncProb, flo
 	// test whether need to expand
 	TQueue<FCoordinate2D> toExpand;
 	if (r < boundaryIncProb) {
-		QueueSurrGridOfType(x, y, GridType::SOIL, toExpand);
+		QueueSurrGridOfType(x, y, EGridType::SOIL, toExpand);
 	}
 	// use BFS-like search to roughly look at its surrounding points
 	while (!toExpand.IsEmpty())
@@ -429,12 +429,12 @@ void UFarmingSubsystem::ModifyEdgePoint(int x, int y, float boundaryIncProb, flo
 		toExpand.Dequeue(currTuple);
 
 		// if the element is already processed
-		if (GridMap.GetElement(currTuple.Row, currTuple.Column) == static_cast<int>(GridType::SAND))
+		if (GridMap.GetElement(currTuple.Row, currTuple.Column) == static_cast<int>(EGridType::SAND))
 			continue;
 		float r_curr = Stream.FRandRange(0.0f, 1.0f);
 		if (r_curr < boundaryIncProb) {
-			GridMap.SetElement(currTuple.Row, currTuple.Column, static_cast<int>(GridType::SAND));
-			QueueSurrGridOfType(currTuple.Row, currTuple.Column, GridType::SOIL, toExpand);
+			GridMap.SetElement(currTuple.Row, currTuple.Column, static_cast<int>(EGridType::SAND));
+			QueueSurrGridOfType(currTuple.Row, currTuple.Column, EGridType::SOIL, toExpand);
 		}
 	}
 
@@ -442,8 +442,8 @@ void UFarmingSubsystem::ModifyEdgePoint(int x, int y, float boundaryIncProb, flo
 	// test whether need to shrink
 	TQueue<FCoordinate2D> toShrink;
 	if (r > 1 - boundaryDecProb) {
-		QueueSurrGridOfType(x, y, GridType::SAND, toShrink);
-		GridMap.SetElement(x, y, static_cast<int>(GridType::SOIL));
+		QueueSurrGridOfType(x, y, EGridType::SAND, toShrink);
+		GridMap.SetElement(x, y, static_cast<int>(EGridType::SOIL));
 	}
 	// use BFS-like search to roughly look at its surrounding points
 	while (!toShrink.IsEmpty())
@@ -452,19 +452,19 @@ void UFarmingSubsystem::ModifyEdgePoint(int x, int y, float boundaryIncProb, flo
 		toShrink.Dequeue(currTuple);
 
 		// if the element is already processed
-		if (GridMap.GetElement(currTuple.Row, currTuple.Column) == static_cast<int>(GridType::SOIL))
+		if (GridMap.GetElement(currTuple.Row, currTuple.Column) == static_cast<int>(EGridType::SOIL))
 			continue;
 		float r_curr = Stream.FRandRange(0.0f, 1.0f);
 		if (r_curr > 1 - boundaryDecProb) {
 			
-			GridMap.SetElement(currTuple.Row, currTuple.Column, static_cast<int>(GridType::SOIL));
-			QueueSurrGridOfType(currTuple.Row, currTuple.Column, GridType::SAND, toShrink);
+			GridMap.SetElement(currTuple.Row, currTuple.Column, static_cast<int>(EGridType::SOIL));
+			QueueSurrGridOfType(currTuple.Row, currTuple.Column, EGridType::SAND, toShrink);
 		}
 	}
 }
 
 
-void UFarmingSubsystem::QueueSurrGridOfType(int x, int y, GridType type, TQueue<FCoordinate2D>& queue) {
+void UFarmingSubsystem::QueueSurrGridOfType(int x, int y, EGridType type, TQueue<FCoordinate2D>& queue) {
 	if (GridMap.GetElementUp(x, y)) {
 		if (*(GridMap.GetElementUp(x, y)) == static_cast<int>(type)) {
 			queue.Enqueue(FCoordinate2D(x, y - 1));
@@ -492,9 +492,9 @@ void UFarmingSubsystem::QueueSurrGridOfType(int x, int y, GridType type, TQueue<
 
 }
 
-void UFarmingSubsystem::UpdateGridsFromTypes(TArray<GridType> types) {
+void UFarmingSubsystem::UpdateGridsFromTypes(TArray<EGridType> types) {
 	TArray<int> typeInts;
-	for (GridType type : types) {
+	for (EGridType type : types) {
 		typeInts.AddUnique(static_cast<int>(type));
 	}
 
@@ -506,7 +506,7 @@ void UFarmingSubsystem::UpdateGridsFromTypes(TArray<GridType> types) {
 			}
 			else {
 				GridPtrs.GetElement(i, j)->setGridType(
-					static_cast<GridType>(GridMap.GetElement(i, j))
+					static_cast<EGridType>(GridMap.GetElement(i, j))
 				);
 				GridPtrs.GetElement(i, j)->UpdateGrid();
 			}
@@ -554,16 +554,16 @@ void UFarmingSubsystem::SpawnGridRandom(const FVector p1, const FVector p2)
 			if (NewFarmingGrid) {
 			// do things to the newly spawned grid
 
-				int r = (rand() % static_cast<int>(GridType::Count)); // random grid type
+				int r = (rand() % static_cast<int>(EGridType::Count)); // random grid type
 				GridMap.SetElement(r, x_count, y_count);
-				NewFarmingGrid->setGridType(static_cast<GridType>(r));
+				NewFarmingGrid->setGridType(static_cast<EGridType>(r));
 				NewFarmingGrid->UpdateGrid();
 			}
 		}
 	}
 }
 
-void UFarmingSubsystem::ChangeGrid(FCoordinate2D gridCoordinate, GridType newType)
+void UFarmingSubsystem::ChangeGrid(FCoordinate2D gridCoordinate, EGridType newType)
 {
 	GridMap.SetElement(gridCoordinate.Row, gridCoordinate.Column, static_cast<int>(newType));
 	GridPtrs.GetElement(gridCoordinate.Row, gridCoordinate.Column)->setGridType(newType);

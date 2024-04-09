@@ -16,7 +16,7 @@
 
 class AFarmingGrid;
 class UOperatingWidget;
-enum class GridType: uint8;
+enum class EGridType: uint8;
 
 UCLASS()
 class FARMMODULE_API UFarmingSubsystem : public UGameInstanceSubsystem
@@ -36,7 +36,7 @@ public:
 	TSubclassOf<AActor> BP_GridActor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TMap<GridType, FGridTransitionWrapper> GridTransitionMapping;
+	TMap<EGridType, FGridTransitionWrapper> GridTransitionMapping;
 
 private:
 	TArray2D<int> GridMap;
@@ -62,7 +62,7 @@ public:
 		return GridMap;
 	};
 
-	UFUNCTION(BlueprintCallable) void ChangeGrid(FCoordinate2D gridCoordinate, GridType newType);
+	UFUNCTION(BlueprintCallable) void ChangeGrid(FCoordinate2D gridCoordinate, EGridType newType);
 
 private:
 	FORCEINLINE float GetDist(FCoordinate2D p1, FCoordinate2D p2) const {
@@ -84,7 +84,7 @@ private:
 		int exptRadius, int radiusAttemptNum, float radiusIncProb, float radiusDecProb,
 		float boundaryIncProb, float boundaryDecProb
 	);	
-	void QueueSurrGridOfType(int x, int y, GridType type, TQueue<FCoordinate2D>& queue);
+	void QueueSurrGridOfType(int x, int y, EGridType type, TQueue<FCoordinate2D>& queue);
 	void ModifyEdgePoint(int x, int y, float boundaryIncProb, float boundaryDecProb);
 	void GenerateRiver(
 		int riverExpandMargin, int lakeExpandMargin,
@@ -100,7 +100,7 @@ private:
 	TArray<FVector> GenerateWanderingLine(const FVector& Start, const FVector& End, int32 NumPoints, float NoiseScale, float MaxOffset);
 
 	void UpdateAllGrids();
-	void UpdateGridsFromTypes(TArray<GridType> types);
+	void UpdateGridsFromTypes(TArray<EGridType> types);
 
 	TArray2D<float> GeneratePerlinNoiseMap(int rowSize, int columnSize, FNoiseMapParams noiseMapParams);
 

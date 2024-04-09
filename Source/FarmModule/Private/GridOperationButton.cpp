@@ -25,7 +25,7 @@ void UGridOperationButton::OnClick()
 	if (subsystem) {
 		FGridTransitionWrapper* wrapper = subsystem->GridTransitionMapping.Find(_GridType);
 		if (wrapper) {
-			GridType* type = wrapper->OperationMapping.Find(Operation);
+			EGridType* type = wrapper->OperationMapping.Find(Operation);
 			click.Broadcast(Row, Column, *type);
 		}
 	}
@@ -34,7 +34,7 @@ void UGridOperationButton::OnClick()
 	
 }
 
-void UGridOperationButton::ClickFunction(int32 _row, int32 _column, GridType type)
+void UGridOperationButton::ClickFunction(int32 _row, int32 _column, EGridType type)
 {
 	/** load stuff here **/
 	UE_LOG(LogTemp, Warning, TEXT("Row: %i, Column: %i, Changing to new type"), _row, _column);

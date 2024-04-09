@@ -10,6 +10,9 @@
  * 
  */
 class UMyGameInstanceSubsystem;
+class APlant;
+class ACommonFarmManager;
+class UWidgetComponent;
 
 UENUM(BlueprintType)
 enum class EFarmingState : uint8 {
@@ -33,9 +36,25 @@ public:
 	void HandleExitFarm() override;
 	void HandleSwitchProp() override;
 
+	TSubclassOf<APlant> GetHoldingSeed() {
+		return HoldingSeed;
+	}
+
 public:
 	UPROPERTY(EditAnywhere)
 	TArray<EFarmingState> AvailableStates;
+
+	UPROPERTY(EditAnywhere)
+	TMap<TSubclassOf<APlant>, int> SeedPackage;
+
+	UPROPERTY(EditAnywhere)
+	UWidgetComponent* TargetWidget;
+
+	UPROPERTY(EditAnywhere)
+	float WaterAddMoisture = 0.05f;
+
+	UPROPERTY(EditAnywhere)
+	float DecontaminateMinusPollution = 0.3f;
 
 private:
 	/** Camera boom positioning the camera behind the character */
@@ -50,10 +69,18 @@ private:
 
 	EFarmingState CurrFarmingState = EFarmingState::IDLE;
 
+	TSubclassOf<APlant> HoldingSeed = nullptr;
+
+	ACommonFarmManager* FarmManager = nullptr;
+
 private:
 	void BeginPlay() override;
 
 	void UpdateState();
+
+	void HandleInteract() override;
+
+
 
 	
 };

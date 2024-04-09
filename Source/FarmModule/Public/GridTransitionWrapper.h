@@ -20,13 +20,13 @@ struct FGridTransitionWrapper
     FGridTransitionWrapper() {};
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-    GridType _GridType;
+    EGridType _GridType;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     int32 OperationNum;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-    TMap<GridOperation, GridType> OperationMapping;
+    TMap<GridOperation, EGridType> OperationMapping;
 
 
 };

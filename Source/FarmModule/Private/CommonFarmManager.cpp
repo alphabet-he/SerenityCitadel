@@ -7,6 +7,11 @@
 #include "FarmModuleEnums.h"
 #include "Plant.h"
 #include <Components/ArrowComponent.h>
+#include "FarmingRobotCharacter.h"
+#include "MyPlayerController.h"
+#include <Kismet/GameplayStatics.h>
+#include <Components/WidgetComponent.h>
+
 
 // Sets default values
 ACommonFarmManager::ACommonFarmManager()
@@ -20,6 +25,12 @@ ACommonFarmManager::ACommonFarmManager()
 void ACommonFarmManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerController = Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	check(PlayerController);
+
+	PlayerCharacter = Cast<AFarmingRobotCharacter>(PlayerController->GetPlayerCharacter());
+	check(PlayerCharacter);
 	
 }
 
@@ -28,17 +39,17 @@ void ACommonFarmManager::UpdateAllGrids()
 	if (GridTypeMap.IsEmpty()) return;
 	for (int i = 0; i < GridPtrMap.GetRow(); i++) {
 		for (int j = 0; j < GridPtrMap.GetColumn(); j++) {
-			UpdateGrid(FCoordinate2D{ i, j });
+			UpdateGridBasedOnTypeMap(FCoordinate2D{ i, j });
 		}
 	}
 }
 
-void ACommonFarmManager::UpdateGridsFromTypes(TArray<GridType> types)
+void ACommonFarmManager::UpdateGridsFromTypes(TArray<EGridType> types)
 {
 	if (GridTypeMap.IsEmpty()) return;
 
 	TArray<int> typeInts;
-	for (GridType type : types) {
+	for (EGridType type : types) {
 		typeInts.AddUnique(static_cast<int>(type));
 	}
 
@@ -49,19 +60,19 @@ void ACommonFarmManager::UpdateGridsFromTypes(TArray<GridType> types)
 				continue;
 			}
 			else {
-				UpdateGrid(FCoordinate2D{ i, j });
+				UpdateGridBasedOnTypeMap(FCoordinate2D{ i, j });
 			}
 		}
 	}
 }
 
-void ACommonFarmManager::UpdateGrid(FCoordinate2D gridCoordinate)
+void ACommonFarmManager::UpdateGridBasedOnTypeMap(FCoordinate2D gridCoordinate)
 {
 	if (GridTypeMap.IsEmpty()) return;
 
 	int type = GridTypeMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
 	GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column)->setGridType(
-		static_cast<GridType>(type));
+		static_cast<EGridType>(type));
 	if (GridTextures[type]) {
 		GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column)->UpdateGrid(GridTextures[type]);
 	}
@@ -71,14 +82,168 @@ void ACommonFarmManager::UpdateGrid(FCoordinate2D gridCoordinate)
 
 }
 
+void ACommonFarmManager::CheckAndUpdateGrid(FCoordinate2D gridCoordinate) {
+	
+	AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
+
+	// check sand
+	if (grid->MoisturePercentage < SandMoistureThreshold) {
+		GridTypeMap.SetElement(gridCoordinate.Row, gridCoordinate.Column,
+			static_cast<int>(EGridType::SAND));
+		UpdateGridBasedOnTypeMap(gridCoordinate);
+	}
+
+	// check water
+	if (grid->MoisturePercentage > WaterMoistureThreshold
+		&& grid->Height < WaterHeightThreshold) {
+		GridTypeMap.SetElement(gridCoordinate.Row, gridCoordinate.Column,
+			static_cast<int>(EGridType::WATER));
+		UpdateGridBasedOnTypeMap(gridCoordinate);
+	}
+
+}
+
+void ACommonFarmManager::CheckAndUpdatePollution(FCoordinate2D gridCoordinate) 
+{
+	AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
+	if (grid->PollutionPercent > PollutionThreshold) {
+		grid->bPolluted = true;
+		grid->UpdatePolluted(PollutedMaterial);
+	}
+
+	else {
+		grid->bPolluted = false;
+		grid->ClearPolluted();
+	}
+}
+
+bool ACommonFarmManager::Operate(EFarmingState action)
+{
+	FCoordinate2D coordinate = FindGridAtLocation(PlayerCharacter->TargetWidget->GetComponentLocation());
+	AFarmingGrid* grid = GridPtrMap.GetElement(coordinate.Row, coordinate.Column);
+	//grid->GridMesh->SetMaterial(0, nullptr);
+
+	if (action == EFarmingState::DIGGING) { return Dig(coordinate); }
+	if (action == EFarmingState::WATERING) { return Water(coordinate); }
+	if (action == EFarmingState::DECONTAMINATING) { return Decontaminate(coordinate); }
+	if (action == EFarmingState::SEEDING) { return Seed(coordinate); }
+	return false;
+}
+
 AFarmingGrid* ACommonFarmManager::FindGridUnderPlayer()
 {
 	return nullptr;
 }
 
-AFarmingGrid* ACommonFarmManager::FindGridAtLocation()
+FCoordinate2D ACommonFarmManager::FindGridAtLocation(FVector location)
 {
-	return nullptr;
+	int RowNum = GridTypeMap.GetRow();
+	int ColNum = GridTypeMap.GetColumn();
+
+	int desiredRow = -1;
+	int desiredCol = -1;
+
+	// find column
+	float currDist = INT_MAX;
+	for (int i = 0; i < ColNum; i++) {
+		float dist = FVector::Dist(location, GridLocationMap.GetElement(0, i));
+		if (dist <= currDist) {
+			currDist = dist;
+			desiredCol = i;
+		}
+	}
+
+	// find row
+	currDist = INT_MAX;
+	for (int i = 0; i < RowNum; i++) {
+		float dist = FVector::Dist(location, GridLocationMap.GetElement(i, 0));
+		if (dist <= currDist) {
+			currDist = dist;
+			desiredRow = i;
+		}
+	}
+
+	return FCoordinate2D{ desiredRow, desiredCol };
+}
+
+bool ACommonFarmManager::OperateOnGrid(FCoordinate2D gridCoordinate, EFarmingState action)
+{
+	
+	return false;
+}
+
+bool ACommonFarmManager::Dig(FCoordinate2D gridCoordinate)
+{
+	if (CanDigTypes.Contains(static_cast<EGridType>(GridTypeMap.GetElement(gridCoordinate.Row, gridCoordinate.Column)))) {
+		AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
+		// no plant on it
+		if (!grid->EntityAbove) {
+			grid->bDigged = true;
+			grid->GridMesh->SetStaticMesh(DiggedGridMesh);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool ACommonFarmManager::Water(FCoordinate2D gridCoordinate)
+{
+	AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
+
+	float intendedMoisture = PlayerCharacter->WaterAddMoisture + grid->MoisturePercentage;
+
+	if (intendedMoisture > 1) {
+		WaterEvaporateGrids.Add(gridCoordinate, 1 - grid->MoisturePercentage);
+		grid->MoisturePercentage = 1;
+	}
+	else {
+		WaterEvaporateGrids.Add(gridCoordinate, PlayerCharacter->WaterAddMoisture);
+		grid->MoisturePercentage += PlayerCharacter->WaterAddMoisture;
+	}
+
+	CheckAndUpdateGrid(gridCoordinate);
+
+	return true;
+}
+
+bool ACommonFarmManager::Decontaminate(FCoordinate2D gridCoordinate)
+{
+	AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
+
+	grid->PollutionPercent = fmin(0, grid->PollutionPercent - PlayerCharacter->DecontaminateMinusPollution);
+
+	CheckAndUpdatePollution(gridCoordinate);
+
+	return true;
+}
+
+bool ACommonFarmManager::Seed(FCoordinate2D gridCoordinate)
+{
+	if (PlayerCharacter->SeedPackage[PlayerCharacter->GetHoldingSeed()] <= 0) {
+		return false;
+	}
+
+	AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
+	if (!grid->bDigged) {
+		return false;
+	}
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	APlant* spawnedPlant = GetWorld()->SpawnActor<APlant>(PlayerCharacter->GetHoldingSeed(),
+		grid->PlantMark->GetComponentLocation(), grid->PlantMark->GetComponentRotation(),
+		SpawnParameters);
+
+	if (spawnedPlant) {
+		grid->EntityAbove = spawnedPlant;
+		grid->GridMesh->SetStaticMesh(SeededGridMesh);
+		return true;
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Seed failed"));
+		return false;
+	}
 }
 
 TArray2D<float> ACommonFarmManager::GeneratePerlinNoiseMap(int rowSize, int columnSize, FNoiseMapParams noiseMapParams)
@@ -153,7 +318,7 @@ void ACommonFarmManager::SpawnRandomPlant(FCoordinate2D loc)
 		SpawnParameters);
 
 	if (spawnedPlant) {
-		grid->setPlant(spawnedPlant);
+		grid->EntityAbove = spawnedPlant;
 	}
 }
 

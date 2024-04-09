@@ -10,8 +10,11 @@
 
 class AFarmingGrid;
 struct FNoiseMapParams;
-enum class GridType : uint8;
+enum class EGridType : uint8;
 class APlant;
+enum class EFarmingState : uint8;
+class AFarmingRobotCharacter;
+class AMyPlayerController;
 
 UCLASS()
 class FARMMODULE_API ACommonFarmManager : public AActor
@@ -29,7 +32,15 @@ protected:
 protected:
 	TArray2D<int> GridTypeMap;
 	TArray2D<AFarmingGrid*> GridPtrMap;
-	TMap<FVector, AFarmingGrid*> LocationGridMap;
+	TArray2D<FVector> GridLocationMap;
+
+	AFarmingRobotCharacter* PlayerCharacter;
+	AMyPlayerController* PlayerController;
+
+	// the location, the max percentage to evaporate
+	TMap<FCoordinate2D, float> WaterEvaporateGrids;
+
+	TArray<FCoordinate2D> SeededGrids;
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -39,17 +50,38 @@ public:
 	UMaterial* PollutedMaterial;
 
 	UPROPERTY(EditAnywhere)
+	UStaticMesh* DiggedGridMesh;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* SeededGridMesh;
+
+	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<APlant>> NaturalPlants;
+
+	UPROPERTY(EditAnywhere)
+	TArray<EGridType> CanDigTypes;
+
+	UPROPERTY(EditAnywhere)
+	float SandMoistureThreshold;
+	UPROPERTY(EditAnywhere)
+	float WaterMoistureThreshold;
+	UPROPERTY(EditAnywhere)
+	float WaterHeightThreshold;
+	UPROPERTY(EditAnywhere)
+	float PollutionThreshold;
+
+	UPROPERTY(EditAnywhere)
+	float WaterEvaporatePercent;
 
 public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateAllGrids();
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateGridsFromTypes(TArray<GridType> types);
+	void UpdateGridsFromTypes(TArray<EGridType> types);
 
 	UFUNCTION(BlueprintCallable)
-	inline void ChangeGridType(FCoordinate2D gridCoordinate, GridType newType) 
+	inline void ChangeGridType(FCoordinate2D gridCoordinate, EGridType newType) 
 	{
 		if (GridTypeMap.IsEmpty()) return;
 		if (gridCoordinate.Row < 0 || gridCoordinate.Row >= GridTypeMap.GetRow()
@@ -59,13 +91,30 @@ public:
 	};
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateGrid(FCoordinate2D gridCoordinate);
+	void UpdateGridBasedOnTypeMap(FCoordinate2D gridCoordinate);
+
+	UFUNCTION(BlueprintCallable)
+	void CheckAndUpdateGrid(FCoordinate2D gridCoordinate);
+
+	UFUNCTION(BlueprintCallable)
+	void CheckAndUpdatePollution(FCoordinate2D gridCoordinate);
+
+	UFUNCTION(BlueprintCallable)
+	virtual bool Operate(EFarmingState action);
 
 	UFUNCTION(BlueprintCallable)
 	AFarmingGrid* FindGridUnderPlayer();
 
 	UFUNCTION(BlueprintCallable)
-	AFarmingGrid* FindGridAtLocation();
+	FCoordinate2D FindGridAtLocation(FVector location);
+
+	UFUNCTION(BlueprintCallable)
+	virtual bool OperateOnGrid(FCoordinate2D gridCoordinate, EFarmingState action);
+
+	virtual bool Dig(FCoordinate2D gridCoordinate);
+	virtual bool Water(FCoordinate2D gridCoordinate);
+	virtual bool Decontaminate(FCoordinate2D gridCoordinate);
+	virtual bool Seed(FCoordinate2D gridCoordinate);
 
 	TArray2D<float> GeneratePerlinNoiseMap(int rowSize, int columnSize, FNoiseMapParams noiseMapParams);
 

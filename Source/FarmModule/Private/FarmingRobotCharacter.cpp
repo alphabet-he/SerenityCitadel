@@ -10,6 +10,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
 #include "MyGameInstanceSubsystem.h"
+#include "CommonFarmManager.h"
+#include <Kismet/GameplayStatics.h>
+#include <Components/WidgetComponent.h>
 
 AFarmingRobotCharacter::AFarmingRobotCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -49,6 +52,10 @@ AFarmingRobotCharacter::AFarmingRobotCharacter(const FObjectInitializer& ObjectI
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Create target widget
+	TargetWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Target Widget"));
+	TargetWidget->SetupAttachment(RootComponent);
+
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
@@ -74,6 +81,14 @@ void AFarmingRobotCharacter::BeginPlay()
 		GetWorld()->GetGameInstance()->GetSubsystem<UMyGameInstanceSubsystem>()
 	);
 	check(MyGameInstanceSubsystem);
+
+	if (SeedPackage.Num() > 0) {
+		auto It = SeedPackage.CreateConstIterator(); // Create a const iterator for the map
+		HoldingSeed = It->Key; // Get the first key
+	}
+
+	FarmManager = Cast<ACommonFarmManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACommonFarmManager::StaticClass()));
+	check(FarmManager);
 }
 
 void AFarmingRobotCharacter::HandleExitFarm()
@@ -88,6 +103,7 @@ void AFarmingRobotCharacter::HandleSwitchProp()
 	if (ind == AvailableStates.Num()) {
 		ind = 0;
 	}
+	
 	CurrFarmingState = AvailableStates[ind];
 
 	UpdateState();
@@ -97,6 +113,13 @@ void AFarmingRobotCharacter::UpdateState()
 {
 	FString s = StaticEnum<EFarmingState>()->GetNameByValue(static_cast<int>(CurrFarmingState)).ToString();
 	UE_LOG(LogTemp, Warning, TEXT("%s"), *s);
+}
+
+void AFarmingRobotCharacter::HandleInteract()
+{
+	if (CurrFarmingState == EFarmingState::IDLE) return;
+
+	FarmManager->Operate(CurrFarmingState);
 }
 
 

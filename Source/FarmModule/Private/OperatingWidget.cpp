@@ -67,7 +67,7 @@ void UOperatingWidget::NativeConstruct()
 void UOperatingWidget::GridButtonClicked(int32 row, int32 col)
 {
 	
-	FString EnumName = StaticEnum<GridType>()->GetNameByValue(farmingSystem->GetGridMap().GetElement(row, col)).ToString();
+	FString EnumName = StaticEnum<EGridType>()->GetNameByValue(farmingSystem->GetGridMap().GetElement(row, col)).ToString();
 	CurrGridType->SetText(FText::FromString(EnumName));
 
 	// Define the format string using LOCTEXT
@@ -88,7 +88,7 @@ void UOperatingWidget::GridButtonClicked(int32 row, int32 col)
 	}
 	ButtonsInVerticalBox.Empty();
 	
-	GridType _gridType = static_cast<GridType>(farmingSystem->GetGridMap().GetElement(row, col));
+	EGridType _gridType = static_cast<EGridType>(farmingSystem->GetGridMap().GetElement(row, col));
 	FGridTransitionWrapper* wrapper = farmingSystem->GridTransitionMapping.Find(_gridType);
 	if (wrapper) {
 		for (const auto& it : wrapper->OperationMapping)
@@ -136,27 +136,27 @@ void UOperatingWidget::UpdateGridButtonColor(int32 row, int32 col)
 
 	FButtonStyle MyButtonStyle = ButtonToUpdate->GetStyle();
 
-	if (gridMap.GetElement(row, col) == static_cast<int>(GridType::WATER)) {
+	if (gridMap.GetElement(row, col) == static_cast<int>(EGridType::WATER)) {
 		MyButtonStyle.Normal.TintColor = FSlateColor(FLinearColor::Blue);
 	}
 
-	if (gridMap.GetElement(row, col) == static_cast<int>(GridType::SAND)) {
+	if (gridMap.GetElement(row, col) == static_cast<int>(EGridType::SAND)) {
 		MyButtonStyle.Normal.TintColor = FSlateColor(FLinearColor::Yellow);
 	}
 
-	if (gridMap.GetElement(row, col) == static_cast<int>(GridType::ROCK)) {
+	if (gridMap.GetElement(row, col) == static_cast<int>(EGridType::ROCK)) {
 		MyButtonStyle.Normal.TintColor = FSlateColor(FLinearColor::Red);
 	}
 
-	if (gridMap.GetElement(row, col) == static_cast<int>(GridType::SOIL)) {
+	if (gridMap.GetElement(row, col) == static_cast<int>(EGridType::SOIL)) {
 		MyButtonStyle.Normal.TintColor = FSlateColor(FLinearColor::Gray);
 	}
 
-	if (gridMap.GetElement(row, col) == static_cast<int>(GridType::PIT)) {
+	if (gridMap.GetElement(row, col) == static_cast<int>(EGridType::PIT)) {
 		MyButtonStyle.Normal.TintColor = FSlateColor(FLinearColor::White);
 	}
 
-	if (gridMap.GetElement(row, col) == static_cast<int>(GridType::FARMLAND)) {
+	if (gridMap.GetElement(row, col) == static_cast<int>(EGridType::FARMLAND)) {
 		MyButtonStyle.Normal.TintColor = FSlateColor(FLinearColor::Green);
 	}
 

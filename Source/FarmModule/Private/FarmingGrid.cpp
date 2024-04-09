@@ -34,8 +34,8 @@ void AFarmingGrid::UpdateGrid()
 	UGameInstance* GameInst = GetGameInstance();
 	FarmingSubsystem = GameInst->GetSubsystem<UFarmingSubsystem>();
 	if(!FarmingSubsystem) return;
-	if (gridType == -1) return;
-	UMaterial* m = FarmingSubsystem->GridTextures[gridType];
+	if (GridType == EGridType::UNDEFINED) return;
+	UMaterial* m = FarmingSubsystem->GridTextures[static_cast<int>(GridType)];
 	UpdateGrid(m);
 
 }
@@ -64,9 +64,8 @@ void AFarmingGrid::UpdateGrid(UMaterialInstance* material)
 	}
 }
 
-void AFarmingGrid::SetPolluted(UMaterial* material)
+void AFarmingGrid::UpdatePolluted(UMaterial* material)
 {
-	bPolluted = true;
 	if (GridMesh->GetMaterial(1)) {
 		GridMesh->SetMaterial(1, material);
 	}

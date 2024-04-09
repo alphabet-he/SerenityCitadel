@@ -11,7 +11,7 @@
  * 
  */
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOperationButtonClickDelegate, int32, row, int32, col, GridType, type);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOperationButtonClickDelegate, int32, row, int32, col, EGridType, type);
 
 class UOperatingWidget;
 class UFarmingSubsystem;
@@ -24,7 +24,7 @@ class FARMMODULE_API UGridOperationButton : public UButton
 public:
 	int32 Row;
 	int32 Column;
-	GridType _GridType;
+	EGridType _GridType;
 	GridOperation Operation;
 
 private:
@@ -44,7 +44,7 @@ private:
 	void OnClick();
 
 	UFUNCTION()
-	void ClickFunction(int32 row, int32 col, GridType type);
+	void ClickFunction(int32 row, int32 col, EGridType type);
 
 	
 };

@@ -18,7 +18,7 @@ class UTextBlock;
 class UFarmingSubsystem;
 class UVerticalBox;
 class UButton;
-enum class GridType : uint8;
+enum class EGridType : uint8;
 
 UCLASS()
 class FARMMODULE_API UOperatingWidget : public UUserWidget

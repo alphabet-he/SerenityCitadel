@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 UENUM(BlueprintType)
-enum class GridType : uint8 {
+enum class EGridType : uint8 {
 	Count = 8 UMETA(DisplayName = "Count for the enum class"),
 	SOIL = 0 UMETA(DisplayName = "SOIL"), // can become farmland, pit, and grass
 	WATER = 1     UMETA(DisplayName = "WATER"),

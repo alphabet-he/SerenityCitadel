@@ -47,6 +47,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TArray<FStringArray> PairedDialoguesAfterFixed;
 
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* FixedMesh;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
