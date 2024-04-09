@@ -21,6 +21,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Farming")
 	UInputAction* ActionSwitchProp = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Action|Character Farming")
+	UInputAction* ActionAnalyze = nullptr;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input|Mapping|Farming Actions Mapping")
 	UInputMappingContext* FarmingMappingContent = nullptr;
 

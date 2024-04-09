@@ -131,6 +131,10 @@ void ASerenityCitadelCharacter::HandleSwitchProp()
 {
 }
 
+void ASerenityCitadelCharacter::HandleAnalyze()
+{
+}
+
 void ASerenityCitadelCharacter::PauseGame()
 {
 }

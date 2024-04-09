@@ -57,6 +57,7 @@ public:
 	// farm actions, defined in AFarmingRobotCharacter
 	virtual void HandleExitFarm();
 	virtual void HandleSwitchProp();
+	virtual void HandleAnalyze();
 
 	void AddActiveWdiget(UUserWidget* widget) { ActiveWidgets.Push(widget); }
 	TArray<UUserWidget*> GetActiveWidgets() { return ActiveWidgets; }

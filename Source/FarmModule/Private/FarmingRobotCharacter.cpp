@@ -109,6 +109,11 @@ void AFarmingRobotCharacter::HandleSwitchProp()
 	UpdateState();
 }
 
+void AFarmingRobotCharacter::HandleAnalyze()
+{
+
+}
+
 void AFarmingRobotCharacter::UpdateState()
 {
 	FString s = StaticEnum<EFarmingState>()->GetNameByValue(static_cast<int>(CurrFarmingState)).ToString();

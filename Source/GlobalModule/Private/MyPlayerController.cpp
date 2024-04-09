@@ -27,7 +27,7 @@ void AMyPlayerController::OnPossess(APawn* aPawn)
 
 		if (ActionAnalyze)
 			EnhancedInputComponent->BindAction(ActionAnalyze, ETriggerEvent::Triggered, PlayerCharacter,
-				&ASerenityCitadelCharacter::HandleSwitchProp);
+				&ASerenityCitadelCharacter::HandleAnalyze);
 	}
 }
 

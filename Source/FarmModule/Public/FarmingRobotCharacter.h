@@ -35,6 +35,7 @@ public:
 
 	void HandleExitFarm() override;
 	void HandleSwitchProp() override;
+	void HandleAnalyze() override;
 
 	TSubclassOf<APlant> GetHoldingSeed() {
 		return HoldingSeed;
