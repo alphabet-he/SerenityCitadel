@@ -3,3 +3,4 @@ Grass_height.uasset filter=lfs diff=lfs merge=lfs -text
 Grass_normal.uasset filter=lfs diff=lfs merge=lfs -text
 Grass_roughness.uasset filter=lfs diff=lfs merge=lfs -text
 Grass_ambientocclusion.uasset filter=lfs diff=lfs merge=lfs -text
+robottexture.uasset filter=lfs diff=lfs merge=lfs -text
