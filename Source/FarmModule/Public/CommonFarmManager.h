@@ -47,7 +47,7 @@ public:
 	TArray<UMaterialInstance*> GridTextures;
 
 	UPROPERTY(EditAnywhere)
-	UMaterial* PollutedMaterial;
+	UMaterialInstance* PollutedMaterial;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* DiggedGridMesh;

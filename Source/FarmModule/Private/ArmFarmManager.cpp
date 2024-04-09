@@ -21,23 +21,29 @@ void AArmFarmManager::BeginPlay()
 
 void AArmFarmManager::GenerateGeometry(FNoiseMapParams HeightMapParams, 
 	FNoiseMapParams MoistureMapParams, FNoiseMapParams PollutionMapParams, 
-	float sandMoistureThreshold, 
-	float waterMoistureThreshold, float waterHeightThreshold, 
-	float pollutionThreshold, 
+	float _sandMoistureThreshold, 
+	float _waterMoistureThreshold, float _waterHeightThreshold, 
+	float _pollutionThreshold, 
 	float plantGrowthProb)
 {
-	this->SandMoistureThreshold = sandMoistureThreshold;
-	this->WaterMoistureThreshold = waterMoistureThreshold;
-	this->WaterHeightThreshold = waterHeightThreshold;
-	this->PollutionThreshold = pollutionThreshold;
+	this->SandMoistureThreshold = _sandMoistureThreshold;
+	this->WaterMoistureThreshold = _waterMoistureThreshold;
+	this->WaterHeightThreshold = _waterHeightThreshold;
+	this->PollutionThreshold = _pollutionThreshold;
 
 	TArray2D<float> heightMap = GeneratePerlinNoiseMap(CycleNum, GridCountPerCycle, HeightMapParams);
-	TArray2D<float> moistureMap = GeneratePerlinNoiseMap(CycleNum, GridCountPerCycle, HeightMapParams);
-	TArray2D<float> pollutionMap = GeneratePerlinNoiseMap(CycleNum, GridCountPerCycle, HeightMapParams);
+	TArray2D<float> moistureMap = GeneratePerlinNoiseMap(CycleNum, GridCountPerCycle, MoistureMapParams);
+	TArray2D<float> pollutionMap = GeneratePerlinNoiseMap(CycleNum, GridCountPerCycle, PollutionMapParams);
 
 	for (int i = 0; i < CycleNum; i++)
 	{
 		for (int j = 0; j < GridCountPerCycle; j++) {
+
+			// set parameters
+			GridPtrMap.GetElement(i, j)->Height = heightMap.GetElement(i, j);
+			GridPtrMap.GetElement(i, j)->MoisturePercent = moistureMap.GetElement(i, j);
+			GridPtrMap.GetElement(i, j)->PollutionPercent = pollutionMap.GetElement(i, j);
+
 
 			// adjust height
 			GridPtrMap.GetElement(i, j)->SetActorScale3D(FVector(1, 1, heightMap.GetElement(i, j)));
@@ -57,7 +63,6 @@ void AArmFarmManager::GenerateGeometry(FNoiseMapParams HeightMapParams,
 			UpdateAllGrids();
 
 			// pollution
-			GridPtrMap.GetElement(i, j)->PollutionPercent = pollutionMap.GetElement(i, j);
 			if (pollutionMap.GetElement(i, j) > PollutionThreshold) {
 
 				// do something with the material

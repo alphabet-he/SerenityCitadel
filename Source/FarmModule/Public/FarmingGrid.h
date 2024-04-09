@@ -44,7 +44,7 @@ public:
 
 	float PollutionPercent = 0;
 
-	float MoisturePercentage = 0;
+	float MoisturePercent = 0;
 
 	float Height = 0;
 
@@ -62,7 +62,7 @@ public:
 
 	void UpdateGrid(UMaterialInstance* material);
 
-	void UpdatePolluted(UMaterial* material);
+	void UpdatePolluted(UMaterialInstance* material);
 
 	void ClearPolluted();
 

@@ -87,14 +87,14 @@ void ACommonFarmManager::CheckAndUpdateGrid(FCoordinate2D gridCoordinate) {
 	AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
 
 	// check sand
-	if (grid->MoisturePercentage < SandMoistureThreshold) {
+	if (grid->MoisturePercent < SandMoistureThreshold) {
 		GridTypeMap.SetElement(gridCoordinate.Row, gridCoordinate.Column,
 			static_cast<int>(EGridType::SAND));
 		UpdateGridBasedOnTypeMap(gridCoordinate);
 	}
 
 	// check water
-	if (grid->MoisturePercentage > WaterMoistureThreshold
+	if (grid->MoisturePercent > WaterMoistureThreshold
 		&& grid->Height < WaterHeightThreshold) {
 		GridTypeMap.SetElement(gridCoordinate.Row, gridCoordinate.Column,
 			static_cast<int>(EGridType::WATER));
@@ -190,15 +190,15 @@ bool ACommonFarmManager::Water(FCoordinate2D gridCoordinate)
 {
 	AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
 
-	float intendedMoisture = PlayerCharacter->WaterAddMoisture + grid->MoisturePercentage;
+	float intendedMoisture = PlayerCharacter->WaterAddMoisture + grid->MoisturePercent;
 
 	if (intendedMoisture > 1) {
-		WaterEvaporateGrids.Add(gridCoordinate, 1 - grid->MoisturePercentage);
-		grid->MoisturePercentage = 1;
+		WaterEvaporateGrids.Add(gridCoordinate, 1 - grid->MoisturePercent);
+		grid->MoisturePercent = 1;
 	}
 	else {
 		WaterEvaporateGrids.Add(gridCoordinate, PlayerCharacter->WaterAddMoisture);
-		grid->MoisturePercentage += PlayerCharacter->WaterAddMoisture;
+		grid->MoisturePercent += PlayerCharacter->WaterAddMoisture;
 	}
 
 	CheckAndUpdateGrid(gridCoordinate);
@@ -210,7 +210,7 @@ bool ACommonFarmManager::Decontaminate(FCoordinate2D gridCoordinate)
 {
 	AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
 
-	grid->PollutionPercent = fmin(0, grid->PollutionPercent - PlayerCharacter->DecontaminateMinusPollution);
+	grid->PollutionPercent = fmax(0, grid->PollutionPercent - PlayerCharacter->DecontaminateMinusPollution);
 
 	CheckAndUpdatePollution(gridCoordinate);
 

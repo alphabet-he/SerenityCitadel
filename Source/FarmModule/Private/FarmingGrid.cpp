@@ -64,10 +64,10 @@ void AFarmingGrid::UpdateGrid(UMaterialInstance* material)
 	}
 }
 
-void AFarmingGrid::UpdatePolluted(UMaterial* material)
+void AFarmingGrid::UpdatePolluted(UMaterialInstance* material)
 {
-	if (GridMesh->GetMaterial(1)) {
-		GridMesh->SetMaterial(1, material);
+	if (GridMesh) {
+		GridMesh->SetOverlayMaterial(material);
 	}
 	
 }
@@ -75,8 +75,8 @@ void AFarmingGrid::UpdatePolluted(UMaterial* material)
 void AFarmingGrid::ClearPolluted()
 {
 	bPolluted = false;
-	if (GridMesh->GetMaterial(1)) {
-		GridMesh->SetMaterial(1, nullptr);
+	if (GridMesh) {
+		GridMesh->SetOverlayMaterial(nullptr);
 	}
 }
 
