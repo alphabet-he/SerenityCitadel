@@ -20,8 +20,13 @@ void AMyPlayerController::OnPossess(APawn* aPawn)
 		if (ActionExitFarm)
 			EnhancedInputComponent->BindAction(ActionExitFarm, ETriggerEvent::Triggered, PlayerCharacter,
 				&ASerenityCitadelCharacter::HandleExitFarm);
+
 		if (ActionSwitchProp)
 			EnhancedInputComponent->BindAction(ActionSwitchProp, ETriggerEvent::Triggered, PlayerCharacter,
+				&ASerenityCitadelCharacter::HandleSwitchProp);
+
+		if (ActionAnalyze)
+			EnhancedInputComponent->BindAction(ActionAnalyze, ETriggerEvent::Triggered, PlayerCharacter,
 				&ASerenityCitadelCharacter::HandleSwitchProp);
 	}
 }
