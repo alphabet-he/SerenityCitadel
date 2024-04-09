@@ -55,7 +55,13 @@ public:
 	TSubclassOf<ASerenityCitadelCharacter> MicroRobotCharacterClass;
 
 	UPROPERTY(EditAnywhere)
-	FVector RobotSpawnPos;
+	TSubclassOf<UUserWidget> FarmingWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	FVector RobotPosOnTable;
+
+	UPROPERTY(EditAnywhere)
+	FVector RobotPosStand;
 
 	UPROPERTY(EditAnywhere)
 	FVector MicroRobotSpawnPosInFarm;
@@ -103,5 +109,7 @@ public:
 	AMinimapPawn* GetMinimapPawn() {
 		return minimapPawn;
 	}
+
+	void OnRobotFixed();
 
 };

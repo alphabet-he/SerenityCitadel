@@ -2,9 +2,10 @@
 
 
 #include "ControlPanelWidget.h"
-#include "HomeGameMode.h"
 #include <Kismet/GameplayStatics.h>
 #include "MyGameInstanceSubsystem.h"
+#include "HomeGameMode.h"
+#include <Components/Image.h>
 
 void UControlPanelWidget::NativeConstruct()
 {
@@ -57,4 +58,28 @@ void UControlPanelWidget::ClickRecallButton()
 
 	PlayerController->DisableMovement();
 	
+}
+
+void UControlPanelWidget::ClickPowerOnButton()
+{
+	PlayerController->DisableMouseCursor();
+	if (HomeGameMode->GetMyGameInstanceSubsystem()->bRobotFixed) {
+		Succeeded->SetVisibility(ESlateVisibility::Visible);
+		PowerOnButton->SetIsEnabled(false);
+	}
+
+	if (HomeGameMode->GetMyGameInstanceSubsystem()->bRobotFixed) {
+		Failed->SetVisibility(ESlateVisibility::Visible);
+		PowerOnButton->SetIsEnabled(false);
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, this, &UControlPanelWidget::HideFailedNotice, 1.5f);
+	}
+
+}
+
+void UControlPanelWidget::HideFailedNotice()
+{
+	Failed->SetVisibility(ESlateVisibility::Hidden);
+	PlayerController->EnableMouseCursor();
+	PowerOnButton->SetIsEnabled(true);
 }

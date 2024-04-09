@@ -46,11 +46,18 @@ public:
 
 	AActor* RobotInRepair = nullptr;
 
+	// in the future, if multiple robots, make this a list
+	bool bRobotFixed = false;
+
 	APlayerControllerTest* PlayerController = nullptr;
 
 	ASerenityCitadelCharacter* PlayerCharacter = nullptr;
 
 	TMap<FName, ASerenityCitadelCharacter*> MicroRobotList;
+
+	TSubclassOf<UUserWidget> FarmingWidgetClass = nullptr;
+
+	UUserWidget* FarmingWidget = nullptr;
 
 	void SwitchToFarmLevel(FName levelName);
 

@@ -42,6 +42,7 @@ void AHomeGameMode::StartPlay()
 	check(MyGameInstanceSubsystem);
 
 	MyGameInstanceSubsystem->PlayerCharacter = PlayerCharacter;
+	MyGameInstanceSubsystem->FarmingWidgetClass = FarmingWidgetClass;
 
 	MainRobot = Cast<AMainRobot>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainRobot::StaticClass()));
 	check(MainRobot);
@@ -77,7 +78,11 @@ void AHomeGameMode::CommissionSpawn(UCommissionButton* commissionButton)
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	robotInRepair = GetWorld()->SpawnActor<ARobotToRepair>(
-		commissionButton->RobotClass, RobotSpawnPos, FRotator(90.0f, 0, 0), SpawnParameters);
+		commissionButton->RobotClass, RobotPosOnTable, FRotator(90.0f, 90.0f, 0), SpawnParameters);
+	if (robotInRepair) {
+		// change the pos of E to talk widget
+
+	}
 	MyGameInstanceSubsystem->RobotInRepair = robotInRepair;
 
 	minimap = GetWorld()->SpawnActor<ARobotMinimap>(
@@ -106,4 +111,11 @@ void AHomeGameMode::DestroyMinimapPawn()
 	}
 	PlayerCharacter->SetControllingMinimapPawn(false);
 	PlayerCharacter->SetControlledMinimapPawn(nullptr);
+}
+
+void AHomeGameMode::OnRobotFixed()
+{
+	robotInRepair->OnFixed();
+	robotInRepair->SetActorLocation(RobotPosStand);
+	robotInRepair->SetActorRotation(FQuat(0));
 }

@@ -13,6 +13,7 @@
 class AHomeGameMode;
 class APlayerControllerTest;
 class APlayerCharacter;
+class UImage;
 
 UCLASS()
 class UControlPanelWidget : public UUserWidget
@@ -28,6 +29,15 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* RecallButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* PowerOnButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Succeeded;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Failed;
 
 	AHomeGameMode* HomeGameMode;
 
@@ -47,6 +57,9 @@ private:
 	UFUNCTION()
 	void ClickRecallButton();
 
+	UFUNCTION()
+	void ClickPowerOnButton();
+
 public:
 	void EnableZoomInButton() {
 		ZoomInButton->SetIsEnabled(true);
@@ -55,4 +68,6 @@ public:
 	void DisableZoomInButton() {
 		ZoomInButton->SetIsEnabled(false);
 	};
+
+	void HideFailedNotice();
 };

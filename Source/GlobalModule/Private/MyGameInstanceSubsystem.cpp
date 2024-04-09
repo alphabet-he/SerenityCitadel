@@ -21,6 +21,11 @@ void UMyGameInstanceSubsystem::SwitchToFarmLevel(FName levelName)
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("Micro robot not spawned"));
 	}
+
+	if (!FarmingWidget) {
+		FarmingWidget = CreateWidget<UUserWidget>(GetWorld(), FarmingWidgetClass);
+	}
+	FarmingWidget->AddToViewport();
 }
 
 void UMyGameInstanceSubsystem::SwitchToHome()
@@ -35,4 +40,6 @@ void UMyGameInstanceSubsystem::SwitchToHome()
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("Cannot find home player character"));
 	}
+
+	FarmingWidget->RemoveFromParent();
 }

@@ -86,4 +86,9 @@ public:
 		PriorityPairedDialogues = dialogues;
 	}
 
+	void OnFixed() {
+		bRepaired = true;
+		InteractableMesh->SetStaticMesh(FixedMesh);
+	};
+
 };
