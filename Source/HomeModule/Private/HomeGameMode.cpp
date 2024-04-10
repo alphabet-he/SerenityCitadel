@@ -42,7 +42,7 @@ void AHomeGameMode::StartPlay()
 	check(MyGameInstanceSubsystem);
 
 	MyGameInstanceSubsystem->PlayerCharacter = PlayerCharacter;
-	MyGameInstanceSubsystem->FarmingWidgetClass = FarmingWidgetClass;
+	MyGameInstanceSubsystem->bStartFromHome = true;
 
 	MainRobot = Cast<AMainRobot>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainRobot::StaticClass()));
 	check(MainRobot);

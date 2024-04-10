@@ -111,13 +111,19 @@ void AFarmingRobotCharacter::HandleSwitchProp()
 
 void AFarmingRobotCharacter::HandleAnalyze()
 {
-
+	FarmManager->Analyze();
 }
 
 void AFarmingRobotCharacter::UpdateState()
 {
 	FString s = StaticEnum<EFarmingState>()->GetNameByValue(static_cast<int>(CurrFarmingState)).ToString();
 	UE_LOG(LogTemp, Warning, TEXT("%s"), *s);
+
+	FString Delimiter = TEXT("::");
+	TArray<FString> Parsed;
+	s.ParseIntoArray(Parsed, *Delimiter, true);
+
+	FarmManager->UpdateState(Parsed[1]);
 }
 
 void AFarmingRobotCharacter::HandleInteract()

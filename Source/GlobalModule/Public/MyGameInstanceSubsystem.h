@@ -49,6 +49,9 @@ public:
 	// in the future, if multiple robots, make this a list
 	bool bRobotFixed = false;
 
+	// whether start from home game mode
+	bool bStartFromHome = false;
+
 	APlayerControllerTest* PlayerController = nullptr;
 
 	ASerenityCitadelCharacter* PlayerCharacter = nullptr;
@@ -62,4 +65,9 @@ public:
 	void SwitchToFarmLevel(FName levelName);
 
 	void SwitchToHome();
+
+	UUserWidget* CreateFarmingWidget() {
+		FarmingWidget = CreateWidget<UUserWidget>(GetWorld(), FarmingWidgetClass);
+		return FarmingWidget;
+	};
 };

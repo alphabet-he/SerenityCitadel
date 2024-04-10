@@ -6,6 +6,9 @@
 #include "Blueprint/UserWidget.h"
 #include <Components/Image.h>
 #include <Components/TextBlock.h>
+#include "Components/PanelSlot.h"
+#include <Components/CanvasPanelSlot.h>
+#include <Components/GridPanel.h>
 #include "FarmingWidget.generated.h"
 
 /**
@@ -18,6 +21,16 @@ class FARMMODULE_API UFarmingWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* RedBar;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* BlueBar;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* StatusText;
+
 	UPROPERTY(meta = (BindWidget))
 	UImage* BatteryBar;
 
@@ -27,8 +40,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UImage* PurifierBar;
 
-	UPROPERTY(EditAnywhere)
-	TArray<UImage*> SeedIcons;
+	UPROPERTY(meta = (BindWidget))
+	UGridPanel* SeedGridPanel;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Height;
@@ -88,5 +101,70 @@ public:
 		HintText->SetVisibility(ESlateVisibility::Visible);
 	}
 
+	void HideAllSuggestions() {
+		Dry->SetVisibility(ESlateVisibility::Hidden);
+		Polluted->SetVisibility(ESlateVisibility::Hidden);
+		GoodToGo->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	void UpdateBatteryBar(float percent) {
+		BatteryBarSlot->SetSize(FVector2D(BarBaseLength * percent, BarBaseHeight));
+	}
+
+	void UpdateWaterBar(float percent) {
+		WaterBarSlot->SetSize(FVector2D(BarBaseLength * percent, BarBaseHeight));
+	}
+
+	void UpdatePurifierBar(float percent) {
+		PurifyBarSlot->SetSize(FVector2D(BarBaseLength * percent, BarBaseHeight));
+	}
+
+	void UseSeed() {
+		SeedIcons.Top()->SetVisibility(ESlateVisibility::Hidden);
+		SeedIcons.Pop();
+	}
+
+	void SetStatusText(FText text) {
+		StatusText->SetText(text);
+	}
+
+	void BarFlashRed(UImage* Bar) {
+		FlashingBar = Bar;
+		Bar->SetBrushFromTexture(RedBar);
+
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, this, 
+			&UFarmingWidget::BarReturnBlue, 1.0f);
+	}
+
+private:
+	float BarBaseLength;
+	float BarBaseHeight;
+
+	UCanvasPanelSlot* BatteryBarSlot;
+	UCanvasPanelSlot* WaterBarSlot;
+	UCanvasPanelSlot* PurifyBarSlot;
+
+	UImage* FlashingBar;
+
+	TArray<UWidget*> SeedIcons;
+
+	void NativeConstruct() override {
+
+		Super::NativeConstruct();
+
+		BatteryBarSlot = Cast<UCanvasPanelSlot>(BatteryBar->Slot);
+		WaterBarSlot = Cast<UCanvasPanelSlot>(WaterBar->Slot);
+		PurifyBarSlot = Cast<UCanvasPanelSlot>(PurifierBar->Slot);
+
+		BarBaseLength = BatteryBarSlot->GetSize().X;
+		BarBaseHeight = BatteryBarSlot->GetSize().Y;
+
+		SeedIcons = SeedGridPanel->GetAllChildren();
+	};
+
+	void BarReturnBlue() {
+		FlashingBar->SetBrushFromTexture(BlueBar);
+	}
 
 };

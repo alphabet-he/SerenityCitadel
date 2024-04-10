@@ -15,6 +15,8 @@ class APlant;
 enum class EFarmingState : uint8;
 class AFarmingRobotCharacter;
 class AMyPlayerController;
+class UFarmingWidget;
+class UMyGameInstanceSubsystem;
 
 UCLASS()
 class FARMMODULE_API ACommonFarmManager : public AActor
@@ -42,7 +44,22 @@ protected:
 
 	TArray<FCoordinate2D> SeededGrids;
 
-public:
+	UFarmingWidget* FarmingWidget;
+
+	UMyGameInstanceSubsystem* MyGameInstanceSubsystem;
+
+	FVector LastAnalysisPlayerLocation;
+	FCoordinate2D LastAnalysisGridCoordinate;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UFarmingWidget> FarmingWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	float PlantGrowthMoistureThreshold = 0.5f;
+
+	UPROPERTY(EditAnywhere)
+	float PlantGrowthPollutionThreshold = 0.35f;
+
 	UPROPERTY(EditAnywhere)
 	TArray<UMaterialInstance*> GridTextures;
 
@@ -100,6 +117,9 @@ public:
 	void CheckAndUpdatePollution(FCoordinate2D gridCoordinate);
 
 	UFUNCTION(BlueprintCallable)
+	virtual bool Analyze();
+
+	UFUNCTION(BlueprintCallable)
 	virtual bool Operate(EFarmingState action);
 
 	UFUNCTION(BlueprintCallable)
@@ -116,7 +136,13 @@ public:
 	virtual bool Decontaminate(FCoordinate2D gridCoordinate);
 	virtual bool Seed(FCoordinate2D gridCoordinate);
 
+	void UpdateState(FString stateName);
+
+protected:
 	TArray2D<float> GeneratePerlinNoiseMap(int rowSize, int columnSize, FNoiseMapParams noiseMapParams);
 
 	void SpawnRandomPlant(FCoordinate2D loc);
+
+	void UpdateFarmingWidgetSuggestions(FCoordinate2D coordinate);
+
 };

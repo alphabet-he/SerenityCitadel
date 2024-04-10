@@ -11,7 +11,8 @@
 #include "MyPlayerController.h"
 #include <Kismet/GameplayStatics.h>
 #include <Components/WidgetComponent.h>
-
+#include "FarmingWidget.h"
+#include "MyGameInstanceSubsystem.h"
 
 // Sets default values
 ACommonFarmManager::ACommonFarmManager()
@@ -31,7 +32,29 @@ void ACommonFarmManager::BeginPlay()
 
 	PlayerCharacter = Cast<AFarmingRobotCharacter>(PlayerController->GetPlayerCharacter());
 	check(PlayerCharacter);
-	
+
+	MyGameInstanceSubsystem = Cast<UMyGameInstanceSubsystem>(
+		GetWorld()->GetGameInstance()->GetSubsystem<UMyGameInstanceSubsystem>()
+	);
+	check(MyGameInstanceSubsystem);
+
+	// if farming widget is not initialized, initialize it
+	if (!MyGameInstanceSubsystem->FarmingWidgetClass
+		&& FarmingWidgetClass) {
+		MyGameInstanceSubsystem->FarmingWidgetClass = FarmingWidgetClass;
+		FarmingWidget = Cast<UFarmingWidget>(MyGameInstanceSubsystem->CreateFarmingWidget());
+
+	}
+	// farming widget is already initialized
+	else {
+		FarmingWidget = Cast<UFarmingWidget>(MyGameInstanceSubsystem->FarmingWidget);
+	}
+	check(FarmingWidget);
+
+	// if starts from farm itself
+	if (!MyGameInstanceSubsystem->bStartFromHome) {
+		FarmingWidget->AddToViewport();
+	}
 }
 
 void ACommonFarmManager::UpdateAllGrids()
@@ -117,16 +140,71 @@ void ACommonFarmManager::CheckAndUpdatePollution(FCoordinate2D gridCoordinate)
 	}
 }
 
+bool ACommonFarmManager::Analyze() 
+{
+	if (PlayerCharacter->currBattery < PlayerCharacter->AnalyzeUseBattery) {
+		return false;
+	}
+
+	FCoordinate2D coordinate = FindGridAtLocation(PlayerCharacter->TargetWidget->GetComponentLocation());
+	AFarmingGrid* grid = GridPtrMap.GetElement(coordinate.Row, coordinate.Column);
+
+	LastAnalysisGridCoordinate = coordinate;
+	LastAnalysisPlayerLocation = PlayerCharacter->GetActorLocation();
+
+	// set string
+	FString s = FString::Printf(TEXT("%.2f mm"), grid->Height);
+	FarmingWidget->Height->SetText(FText::FromString(s));
+
+	s = FString::Printf(TEXT("%.2f %%"), grid->MoisturePercent * 100);
+	FarmingWidget->Moisture->SetText(FText::FromString(s));
+
+	s = FString::Printf(TEXT("%.2f %%"), grid->PollutionPercent * 100);
+	FarmingWidget->Pollution->SetText(FText::FromString(s));
+
+	// calculate growth prob
+	float x = 1 - grid->PollutionPercent;
+	float y = grid->MoisturePercent;
+	float desired = FMath::Tanh(2.1 * (x * y - 0.1 * x - 0.01 * y - 0.01));
+	float growingProb = fmax(0, desired);
+	s = FString::Printf(TEXT("%.2f %%"), growingProb * 100);
+	FarmingWidget->GrowingProb->SetText(FText::FromString(s));
+
+	// set suggestions
+	FarmingWidget->HideAllSuggestions();
+	if (grid->MoisturePercent < PlantGrowthMoistureThreshold) {
+		FarmingWidget->Dry->SetVisibility(ESlateVisibility::Visible);
+	}
+	if (grid->PollutionPercent > PlantGrowthPollutionThreshold) {
+		FarmingWidget->Polluted->SetVisibility(ESlateVisibility::Visible);
+	}
+	if (grid->MoisturePercent >= PlantGrowthMoistureThreshold
+		&& grid->PollutionPercent <= PlantGrowthPollutionThreshold) {
+		FarmingWidget->GoodToGo->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	// show analysis panel
+	if (FarmingWidget->AnalysisPanel->GetVisibility() == ESlateVisibility::Hidden) {
+		FarmingWidget->AnalysisPanel->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	// set battery
+	PlayerCharacter->currBattery -= PlayerCharacter->AnalyzeUseBattery;
+	FarmingWidget->UpdateBatteryBar(PlayerCharacter->currBattery);
+
+	return true;
+}
+
 bool ACommonFarmManager::Operate(EFarmingState action)
 {
 	FCoordinate2D coordinate = FindGridAtLocation(PlayerCharacter->TargetWidget->GetComponentLocation());
 	AFarmingGrid* grid = GridPtrMap.GetElement(coordinate.Row, coordinate.Column);
 	//grid->GridMesh->SetMaterial(0, nullptr);
 
-	if (action == EFarmingState::DIGGING) { return Dig(coordinate); }
-	if (action == EFarmingState::WATERING) { return Water(coordinate); }
-	if (action == EFarmingState::DECONTAMINATING) { return Decontaminate(coordinate); }
-	if (action == EFarmingState::SEEDING) { return Seed(coordinate); }
+	if (action == EFarmingState::DIG) { return Dig(coordinate); }
+	if (action == EFarmingState::WATER) { return Water(coordinate); }
+	if (action == EFarmingState::DECONTAMINATE) { return Decontaminate(coordinate); }
+	if (action == EFarmingState::SEED) { return Seed(coordinate); }
 	return false;
 }
 
@@ -174,12 +252,22 @@ bool ACommonFarmManager::OperateOnGrid(FCoordinate2D gridCoordinate, EFarmingSta
 
 bool ACommonFarmManager::Dig(FCoordinate2D gridCoordinate)
 {
+	if (PlayerCharacter->currBattery < PlayerCharacter->DigUseBattery) {
+		FarmingWidget->BarFlashRed(FarmingWidget->BatteryBar);
+		return false;
+	}
+
 	if (CanDigTypes.Contains(static_cast<EGridType>(GridTypeMap.GetElement(gridCoordinate.Row, gridCoordinate.Column)))) {
 		AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
 		// no plant on it
 		if (!grid->EntityAbove) {
 			grid->bDigged = true;
 			grid->GridMesh->SetStaticMesh(DiggedGridMesh);
+
+			// set battery
+			PlayerCharacter->currBattery -= PlayerCharacter->DigUseBattery;
+			FarmingWidget->UpdateBatteryBar(PlayerCharacter->currBattery);
+
 			return true;
 		}
 	}
@@ -188,6 +276,18 @@ bool ACommonFarmManager::Dig(FCoordinate2D gridCoordinate)
 
 bool ACommonFarmManager::Water(FCoordinate2D gridCoordinate)
 {
+	bool ret = true;
+	if (PlayerCharacter->currBattery < PlayerCharacter->DecontaminateUseBattery) {
+		ret = false;
+		FarmingWidget->BarFlashRed(FarmingWidget->BatteryBar);
+	}
+	if (PlayerCharacter->currWater < PlayerCharacter->WaterOnceUsage) {
+		ret = false;
+		FarmingWidget->BarFlashRed(FarmingWidget->WaterBar);
+	}
+
+	if (!ret) return false;
+
 	AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
 
 	float intendedMoisture = PlayerCharacter->WaterAddMoisture + grid->MoisturePercent;
@@ -203,16 +303,58 @@ bool ACommonFarmManager::Water(FCoordinate2D gridCoordinate)
 
 	CheckAndUpdateGrid(gridCoordinate);
 
+	if (gridCoordinate == LastAnalysisGridCoordinate) {
+		FString s = FString::Printf(TEXT("%.2f %%"), grid->MoisturePercent * 100);
+		FarmingWidget->Moisture->SetText(FText::FromString(s));
+
+		UpdateFarmingWidgetSuggestions(gridCoordinate);
+	}
+
+	// set battery
+	PlayerCharacter->currBattery -= PlayerCharacter->WaterUseBattery;
+	FarmingWidget->UpdateBatteryBar(PlayerCharacter->currBattery);
+
+	// set water
+	PlayerCharacter->currWater -= PlayerCharacter->WaterOnceUsage;
+	FarmingWidget->UpdateWaterBar(PlayerCharacter->currWater);
+
 	return true;
 }
 
 bool ACommonFarmManager::Decontaminate(FCoordinate2D gridCoordinate)
 {
+	bool ret = true;
+	if (PlayerCharacter->currBattery < PlayerCharacter->DecontaminateUseBattery) {
+		ret = false;
+		FarmingWidget->BarFlashRed(FarmingWidget->BatteryBar);
+	}
+	if(PlayerCharacter->currPurifyGas < PlayerCharacter->PurifyOnceUsage) {
+		ret = false;
+		FarmingWidget->BarFlashRed(FarmingWidget->PurifierBar);
+	}
+
+	if (!ret) return false;
+
 	AFarmingGrid* grid = GridPtrMap.GetElement(gridCoordinate.Row, gridCoordinate.Column);
 
 	grid->PollutionPercent = fmax(0, grid->PollutionPercent - PlayerCharacter->DecontaminateMinusPollution);
 
 	CheckAndUpdatePollution(gridCoordinate);
+
+	if (gridCoordinate == LastAnalysisGridCoordinate) {
+		FString s = FString::Printf(TEXT("%.2f %%"), grid->PollutionPercent * 100);
+		FarmingWidget->Pollution->SetText(FText::FromString(s));
+
+		UpdateFarmingWidgetSuggestions(gridCoordinate);
+	}
+
+	// set battery
+	PlayerCharacter->currBattery -= PlayerCharacter->DecontaminateUseBattery;
+	FarmingWidget->UpdateBatteryBar(PlayerCharacter->currBattery);
+
+	// set purify gas
+	PlayerCharacter->currPurifyGas -= PlayerCharacter->PurifyOnceUsage;
+	FarmingWidget->UpdatePurifierBar(PlayerCharacter->currPurifyGas);
 
 	return true;
 }
@@ -220,6 +362,10 @@ bool ACommonFarmManager::Decontaminate(FCoordinate2D gridCoordinate)
 bool ACommonFarmManager::Seed(FCoordinate2D gridCoordinate)
 {
 	if (PlayerCharacter->SeedPackage[PlayerCharacter->GetHoldingSeed()] <= 0) {
+		return false;
+	}
+
+	if (PlayerCharacter->currBattery < PlayerCharacter->SeedUseBattery) {
 		return false;
 	}
 
@@ -238,10 +384,19 @@ bool ACommonFarmManager::Seed(FCoordinate2D gridCoordinate)
 	if (spawnedPlant) {
 		grid->EntityAbove = spawnedPlant;
 		grid->GridMesh->SetStaticMesh(SeededGridMesh);
+
+		// set battery
+		PlayerCharacter->currBattery -= PlayerCharacter->SeedUseBattery;
+		FarmingWidget->UpdateBatteryBar(PlayerCharacter->currBattery);
+
+		// set seed
+		PlayerCharacter->SeedPackage[PlayerCharacter->GetHoldingSeed()]--;
+		FarmingWidget->UseSeed();
+
 		return true;
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("Seed failed"));
+		UE_LOG(LogTemp, Warning, TEXT("Seed spawn failed"));
 		return false;
 	}
 }
@@ -320,5 +475,31 @@ void ACommonFarmManager::SpawnRandomPlant(FCoordinate2D loc)
 	if (spawnedPlant) {
 		grid->EntityAbove = spawnedPlant;
 	}
+}
+
+void ACommonFarmManager::UpdateState(FString stateName)
+{
+	FarmingWidget->SetStatusText(FText::FromString(stateName));
+}
+
+void ACommonFarmManager::UpdateFarmingWidgetSuggestions(FCoordinate2D coordinate)
+{
+	AFarmingGrid* grid = GridPtrMap.GetElement(coordinate.Row, coordinate.Column);
+
+	if (FarmingWidget->Dry->Visibility == ESlateVisibility::Visible
+		&& grid->MoisturePercent >= PlantGrowthMoistureThreshold) {
+		FarmingWidget->Dry->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (FarmingWidget->Polluted->Visibility == ESlateVisibility::Visible
+		&& grid->PollutionPercent <= PlantGrowthPollutionThreshold) {
+		FarmingWidget->Polluted->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (grid->MoisturePercent >= PlantGrowthMoistureThreshold
+		&& grid->PollutionPercent <= PlantGrowthPollutionThreshold) {
+		FarmingWidget->GoodToGo->SetVisibility(ESlateVisibility::Visible);
+	}
+	
 }
 

@@ -37,12 +37,6 @@ public:
 	int CycleNum = 50;
 
 	UPROPERTY(EditAnywhere)
-	float PlantGrowthMoistureThreshold = 0.5f;
-
-	UPROPERTY(EditAnywhere)
-	float PlantGrowthPollutionThreshold = 0.2f;
-
-	UPROPERTY(EditAnywhere)
 	FVector GridStartPos;
 
 public:

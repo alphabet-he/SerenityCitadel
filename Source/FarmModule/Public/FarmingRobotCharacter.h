@@ -18,10 +18,10 @@ UENUM(BlueprintType)
 enum class EFarmingState : uint8 {
 	Count = 5 UMETA(DisplayName = "Count for the enum class"),
 	IDLE = 0 UMETA(DisplayName = "IDLE"),
-	DIGGING = 1     UMETA(DisplayName = "DIG"),
-	WATERING = 2	UMETA(DisplayName = "WATER"),
-	DECONTAMINATING = 3	UMETA(DisplayName = "DECONTAMINATE"),
-	SEEDING = 4	UMETA(DisplayName = "SEED")
+	DIG = 1     UMETA(DisplayName = "DIG"),
+	WATER = 2	UMETA(DisplayName = "WATER"),
+	DECONTAMINATE = 3	UMETA(DisplayName = "DECONTAMINATE"),
+	SEED = 4	UMETA(DisplayName = "SEED")
 };
 
 UCLASS()
@@ -41,7 +41,14 @@ public:
 		return HoldingSeed;
 	}
 
+	float currBattery = 1;
+	float currWater = 1;
+	float currPurifyGas = 1;
+
 public:
+	UPROPERTY(EditAnywhere)
+	UWidgetComponent* TargetWidget;
+
 	UPROPERTY(EditAnywhere)
 	TArray<EFarmingState> AvailableStates;
 
@@ -49,13 +56,33 @@ public:
 	TMap<TSubclassOf<APlant>, int> SeedPackage;
 
 	UPROPERTY(EditAnywhere)
-	UWidgetComponent* TargetWidget;
-
-	UPROPERTY(EditAnywhere)
 	float WaterAddMoisture = 0.05f;
 
 	UPROPERTY(EditAnywhere)
 	float DecontaminateMinusPollution = 0.3f;
+
+	// Battery Usage
+	UPROPERTY(EditAnywhere)
+	float DigUseBattery = 0.03f;
+
+	UPROPERTY(EditAnywhere)
+	float WaterUseBattery = 0.01f;
+
+	UPROPERTY(EditAnywhere)
+	float DecontaminateUseBattery = 0.05f;
+
+	UPROPERTY(EditAnywhere)
+	float SeedUseBattery = 0.02f;
+
+	UPROPERTY(EditAnywhere)
+	float AnalyzeUseBattery = 0.01f;
+
+	// Resource Usage
+	UPROPERTY(EditAnywhere)
+	float WaterOnceUsage = 0.125f;
+
+	UPROPERTY(EditAnywhere)
+	float PurifyOnceUsage = 0.15f;
 
 private:
 	/** Camera boom positioning the camera behind the character */

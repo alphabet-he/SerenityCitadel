@@ -55,9 +55,6 @@ public:
 	TSubclassOf<ASerenityCitadelCharacter> MicroRobotCharacterClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> FarmingWidgetClass;
-
-	UPROPERTY(EditAnywhere)
 	FVector RobotPosOnTable;
 
 	UPROPERTY(EditAnywhere)
