@@ -16,19 +16,19 @@ void AHomeGameMode::StartPlay()
 	Super::StartPlay();
 
 	DesktopWidget = CreateWidget<UComputerDesktop>(GetWorld(), DesktopWidgetClass);
-	DesktopWidget->RemoveFromParent();
+	//DesktopWidget->RemoveFromParent();
 
 	CommissionPageWidget = CreateWidget<UCommissionPage>(GetWorld(), CommissionPageWidgetClass);
-	CommissionPageWidget->RemoveFromParent();
+	//CommissionPageWidget->RemoveFromParent();
 
 	InTransitWidget = CreateWidget<UInTransitWidget>(GetWorld(), InTransitWidgetClass);
-	InTransitWidget->RemoveFromParent();
+	//InTransitWidget->RemoveFromParent();
 
 	DialogueWidget = CreateWidget<UDialogueWidget>(GetWorld(), DialogueWidgetClass);
-	DialogueWidget->RemoveFromParent();
+	//DialogueWidget->RemoveFromParent();
 
 	ControlPanelWidget = CreateWidget<UControlPanelWidget>(GetWorld(), ControlPanelWidgetClass);
-	ControlPanelWidget->RemoveFromParent();
+	//ControlPanelWidget->RemoveFromParent();
 
 	PlayerController = Cast<APlayerControllerTest>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	check(PlayerController);
@@ -78,7 +78,7 @@ void AHomeGameMode::CommissionSpawn(UCommissionButton* commissionButton)
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	robotInRepair = GetWorld()->SpawnActor<ARobotToRepair>(
-		commissionButton->RobotClass, RobotPosOnTable, FRotator(90.0f, 90.0f, 0), SpawnParameters);
+		commissionButton->RobotClass, RobotPosOnTable, FRotator(90.0f, 180.0f, 0), SpawnParameters);
 	if (robotInRepair) {
 		// change the pos of E to talk widget
 
@@ -86,7 +86,7 @@ void AHomeGameMode::CommissionSpawn(UCommissionButton* commissionButton)
 	MyGameInstanceSubsystem->RobotInRepair = robotInRepair;
 
 	minimap = GetWorld()->SpawnActor<ARobotMinimap>(
-		commissionButton->RobotMinimapClass, FVector(1000.0f, 1000.0f, -3000.0f), FRotator(0), SpawnParameters);
+		commissionButton->RobotMinimapClass, FVector(1000.0f, 3000.0f, -5000.0f), FRotator(0), SpawnParameters);
 
 	LevelToLoad = commissionButton->LevelToLoad;
 	FLatentActionInfo LatentInfo;

@@ -30,9 +30,6 @@ void ACommonFarmManager::BeginPlay()
 	PlayerController = Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	check(PlayerController);
 
-	PlayerCharacter = Cast<AFarmingRobotCharacter>(PlayerController->GetPlayerCharacter());
-	check(PlayerCharacter);
-
 	MyGameInstanceSubsystem = Cast<UMyGameInstanceSubsystem>(
 		GetWorld()->GetGameInstance()->GetSubsystem<UMyGameInstanceSubsystem>()
 	);
@@ -50,6 +47,11 @@ void ACommonFarmManager::BeginPlay()
 		FarmingWidget = Cast<UFarmingWidget>(MyGameInstanceSubsystem->FarmingWidget);
 	}
 	check(FarmingWidget);
+
+	// get player character of the farm
+	PlayerCharacter = Cast<AFarmingRobotCharacter>(MyGameInstanceSubsystem->MicroRobotList[FarmName]);
+	check(PlayerCharacter);
+	PlayerCharacter->SetFarmManager(this);
 
 	// if starts from farm itself
 	if (!MyGameInstanceSubsystem->bStartFromHome) {
@@ -191,6 +193,11 @@ bool ACommonFarmManager::Analyze()
 	// set battery
 	PlayerCharacter->currBattery -= PlayerCharacter->AnalyzeUseBattery;
 	FarmingWidget->UpdateBatteryBar(PlayerCharacter->currBattery);
+
+	if (!bAnalysisPanelChecking) {
+		StartCheckAnalysisPanel();
+		bAnalysisPanelChecking = true;
+	}
 
 	return true;
 }
@@ -501,5 +508,23 @@ void ACommonFarmManager::UpdateFarmingWidgetSuggestions(FCoordinate2D coordinate
 		FarmingWidget->GoodToGo->SetVisibility(ESlateVisibility::Visible);
 	}
 	
+}
+
+void ACommonFarmManager::StartCheckAnalysisPanel()
+{
+	// set analysis panel check
+	FTimerHandle AnalysisPanelTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(AnalysisPanelTimerHandle, this,
+		&ACommonFarmManager::CheckAnalysisPanelVisibility, CheckAnalysisPanelFreq, true);
+}
+
+void ACommonFarmManager::CheckAnalysisPanelVisibility()
+{
+	if (FarmingWidget->AnalysisPanel->Visibility == ESlateVisibility::Visible) {
+		if (FVector::Dist(PlayerCharacter->GetActorLocation(), LastAnalysisPlayerLocation)
+			>= HideAnalysisPanelThreshold) {
+			FarmingWidget->HideAnalysis();
+		}
+	}
 }
 

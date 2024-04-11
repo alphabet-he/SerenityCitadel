@@ -47,6 +47,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetTargetName(FString s) {
 		TargetName->SetText(FText::FromString(s));
+		return;
 	};
 
 	UFUNCTION(BlueprintCallable) 

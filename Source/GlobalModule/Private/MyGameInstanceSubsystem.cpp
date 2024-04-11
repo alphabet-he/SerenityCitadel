@@ -16,6 +16,7 @@ void UMyGameInstanceSubsystem::SwitchToFarmLevel(FName levelName)
 	}
 
 	if (MicroRobotList.Contains(levelName)) {
+		PlayerController->UnPossess();
 		PlayerController->Possess(MicroRobotList[levelName]);
 	}
 	else {
@@ -40,6 +41,7 @@ void UMyGameInstanceSubsystem::SwitchToHome()
 	}
 
 	if (PlayerCharacter) {
+		PlayerController->UnPossess();
 		PlayerController->Possess(PlayerCharacter);
 	}
 	else {

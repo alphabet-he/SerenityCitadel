@@ -41,6 +41,10 @@ public:
 		return HoldingSeed;
 	}
 
+	void SetFarmManager(ACommonFarmManager* farmManager) {
+		FarmManager = farmManager;
+	}
+
 	float currBattery = 1;
 	float currWater = 1;
 	float currPurifyGas = 1;

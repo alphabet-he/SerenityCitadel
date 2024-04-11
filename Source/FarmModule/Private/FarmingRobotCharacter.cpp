@@ -87,8 +87,12 @@ void AFarmingRobotCharacter::BeginPlay()
 		HoldingSeed = It->Key; // Get the first key
 	}
 
+	/*
 	FarmManager = Cast<ACommonFarmManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACommonFarmManager::StaticClass()));
 	check(FarmManager);
+
+	FarmManager->SetPlayerCharacter(this);
+	*/
 }
 
 void AFarmingRobotCharacter::HandleExitFarm()

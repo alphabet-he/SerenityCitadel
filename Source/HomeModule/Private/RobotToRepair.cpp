@@ -48,7 +48,7 @@ void ARobotToRepair::SetDialogue()
 
 	FRandomStream Stream(FMath::Rand());
 
-	HomeGameMode->DialogueWidget->SetTargetName(Name);
+	//HomeGameMode->DialogueWidget->SetTargetName(Name);
 
 	/*
 	* set dialogues

@@ -51,6 +51,11 @@ protected:
 	FVector LastAnalysisPlayerLocation;
 	FCoordinate2D LastAnalysisGridCoordinate;
 
+	bool bAnalysisPanelChecking = false;
+
+	UPROPERTY(EditAnywhere)
+	FName FarmName;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UFarmingWidget> FarmingWidgetClass;
 
@@ -88,7 +93,13 @@ protected:
 	float PollutionThreshold;
 
 	UPROPERTY(EditAnywhere)
-	float WaterEvaporatePercent;
+	float WaterEvaporatePercent = 0.1f;
+
+	UPROPERTY(EditAnywhere)
+	float CheckAnalysisPanelFreq = 3.0f;
+
+	UPROPERTY(EditAnywhere)
+	float HideAnalysisPanelThreshold = 500.0f;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -138,11 +149,20 @@ public:
 
 	void UpdateState(FString stateName);
 
+	void SetPlayerCharacter(AFarmingRobotCharacter* player) {
+		PlayerCharacter = player;
+	};
+
 protected:
 	TArray2D<float> GeneratePerlinNoiseMap(int rowSize, int columnSize, FNoiseMapParams noiseMapParams);
 
 	void SpawnRandomPlant(FCoordinate2D loc);
 
 	void UpdateFarmingWidgetSuggestions(FCoordinate2D coordinate);
+
+	void StartCheckAnalysisPanel();
+
+	UFUNCTION()
+	void CheckAnalysisPanelVisibility();
 
 };
