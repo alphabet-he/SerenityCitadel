@@ -20,7 +20,7 @@ void ABed::InteractWithPlayer()
 		bCanInteract = false;
 		HomeGameMode->GetPlayerController()->DisableMovementAndAction();
 		HomeGameMode->GetMyGameInstanceSubsystem()->AddDate();
-		HomeGameMode->DesktopWidget->UpdateDate();
+		HomeGameMode->HomeWidgetManager->DesktopWidget->UpdateDate();
 		
 		CameraManager = Cast<APlayerCameraManager>(
 			UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0));

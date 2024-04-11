@@ -4,11 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "ComputerDesktop.h"
-#include "CommissionPage.h"
-#include "InTransitWidget.h"
+#include "HomeWidgetManager.h"
 #include "PlayerCharacter.h"
-#include "DialogueWidget.h"
 #include "ControlPanelWidget.h"
 #include "HomeGameMode.generated.h"
 
@@ -34,19 +31,7 @@ private:
 
 public:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UComputerDesktop> DesktopWidgetClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UCommissionPage> CommissionPageWidgetClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UInTransitWidget> InTransitWidgetClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UDialogueWidget> DialogueWidgetClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UControlPanelWidget> ControlPanelWidgetClass;
+	TSubclassOf<UHomeWidgetManager> HomeWidgetManagerClass;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AMinimapPawn> MinimapPawnClass;
@@ -63,11 +48,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	FVector MicroRobotSpawnPosInFarm;
 
-	UComputerDesktop* DesktopWidget;
-	UCommissionPage* CommissionPageWidget;
-	UInTransitWidget* InTransitWidget;
-	UDialogueWidget* DialogueWidget;
-	UControlPanelWidget* ControlPanelWidget;
+	UHomeWidgetManager* HomeWidgetManager;
 
 	APlayerControllerTest* GetPlayerController() { return PlayerController; }
 	APlayerCharacter* GetPlayerCharacter() { return PlayerCharacter; }

@@ -23,6 +23,10 @@ void UMyGameInstanceSubsystem::SwitchToFarmLevel(FName levelName)
 		UE_LOG(LogTemp, Warning, TEXT("Micro robot not spawned"));
 	}
 
+	if (HomeWidgetManager) {
+		HomeWidgetManager->RemoveFromParent();
+	}
+
 	if (FarmingWidget) {
 		FarmingWidget->AddToViewport();
 	}
@@ -50,6 +54,10 @@ void UMyGameInstanceSubsystem::SwitchToHome()
 
 	if (FarmingWidget) {
 		FarmingWidget->RemoveFromParent();
+	}
+
+	if (HomeWidgetManager) {
+		HomeWidgetManager->AddToViewport();
 	}
 	
 }

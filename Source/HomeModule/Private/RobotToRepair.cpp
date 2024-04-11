@@ -29,9 +29,8 @@ void ARobotToRepair::InteractWithPlayer()
 	}
 
 	if (!bCanInteract) return;
-	if (!HomeGameMode->DialogueWidget) return;
 
-	if (PlayerCharacter->GetActiveWidgets().Contains(HomeGameMode->DialogueWidget)) {
+	if (!EToInteractWidget->IsVisible()) {
 		HideDialogue();
 	}
 	else {
@@ -44,11 +43,15 @@ void ARobotToRepair::InteractWithPlayer()
 
 void ARobotToRepair::SetDialogue()
 {
+	// disable E
 	bCanInteract = false;
+
+	// disable Esc
+	PlayerController->DisableUIActions();
 
 	FRandomStream Stream(FMath::Rand());
 
-	//HomeGameMode->DialogueWidget->SetTargetName(Name);
+	HomeGameMode->HomeWidgetManager->DialogueWidget->SetTargetName(Name);
 
 	/*
 	* set dialogues
@@ -56,8 +59,8 @@ void ARobotToRepair::SetDialogue()
 
 	// if there is priority dialogues
 	if (PriorityPairedDialogues.StringArray.Num() > 0) {
-		HomeGameMode->DialogueWidget->SetPlayerDialogue(PriorityPairedDialogues.StringArray[0]);
-		HomeGameMode->DialogueWidget->SetTargetDialogue(PriorityPairedDialogues.StringArray[1]);
+		HomeGameMode->HomeWidgetManager->DialogueWidget->SetPlayerDialogue(PriorityPairedDialogues.StringArray[0]);
+		HomeGameMode->HomeWidgetManager->DialogueWidget->SetTargetDialogue(PriorityPairedDialogues.StringArray[1]);
 		PriorityPairedDialogues.StringArray.Empty();
 		return;
 	}
@@ -70,8 +73,8 @@ void ARobotToRepair::SetDialogue()
 		if (PlayerDialoguesAfterFixed.Num() == 0
 			&& PairedDialoguesAfterFixed.Num() == 0) {
 
-			HomeGameMode->DialogueWidget->SetPlayerDialogue("...");
-			HomeGameMode->DialogueWidget->SetTargetDialogue("...");
+			HomeGameMode->HomeWidgetManager->DialogueWidget->SetPlayerDialogue("...");
+			HomeGameMode->HomeWidgetManager->DialogueWidget->SetTargetDialogue("...");
 		}
 
 		// no paired dialogues
@@ -114,8 +117,8 @@ void ARobotToRepair::SetDialogue()
 		if (PlayerDialoguesBeforeFixed.Num() == 0
 			&& PairedDialoguesBeforeFixed.Num() == 0) {
 
-			HomeGameMode->DialogueWidget->SetPlayerDialogue("...");
-			HomeGameMode->DialogueWidget->SetTargetDialogue("...");
+			HomeGameMode->HomeWidgetManager->DialogueWidget->SetPlayerDialogue("...");
+			HomeGameMode->HomeWidgetManager->DialogueWidget->SetTargetDialogue("...");
 		}
 
 		// no paired dialogues
@@ -160,16 +163,13 @@ void ARobotToRepair::ShowDialogue() {
 	*/
 
 	// hide the second dialogue
-	HomeGameMode->DialogueWidget->HideTargetDialogue();
+	HomeGameMode->HomeWidgetManager->DialogueWidget->HideTargetDialogue();
 
 	// show player's dialogue
-	HomeGameMode->DialogueWidget->ShowPlayerDialogue();
-
-	// add to player character's list
-	PlayerCharacter->AddActiveWdiget(HomeGameMode->DialogueWidget);
+	HomeGameMode->HomeWidgetManager->DialogueWidget->ShowPlayerDialogue();
 
 	// show widget, disable movement
-	HomeGameMode->DialogueWidget->AddToViewport();
+	HomeGameMode->HomeWidgetManager->ShowDialogue();
 	PlayerController->DisableMovementAndAction();
 	HideInteractionWidget();
 
@@ -179,8 +179,7 @@ void ARobotToRepair::ShowDialogue() {
 
 void ARobotToRepair::HideDialogue()
 {
-	HomeGameMode->DialogueWidget->RemoveFromParent();
-	PlayerCharacter->RemoveWidget(HomeGameMode->DialogueWidget);
+	HomeGameMode->HomeWidgetManager->HideAllWidgets();
 	PlayerController->EnableMovementAndAction();
 	ShowInteractionWidget();
 }
@@ -188,21 +187,22 @@ void ARobotToRepair::HideDialogue()
 void ARobotToRepair::ChooseRandomDialogue(TArray<FString> PlayerDialogueArray, TArray<FString> RobotDialogueArray)
 {
 	int rndInd = FMath::RandRange(0, PlayerDialogueArray.Num() - 1);
-	HomeGameMode->DialogueWidget->SetPlayerDialogue(PlayerDialogueArray[rndInd]);
+	HomeGameMode->HomeWidgetManager->DialogueWidget->SetPlayerDialogue(PlayerDialogueArray[rndInd]);
 
 	rndInd = FMath::RandRange(0, RobotDialogueArray.Num() - 1);
-	HomeGameMode->DialogueWidget->SetTargetDialogue(RobotDialogueArray[rndInd]);
+	HomeGameMode->HomeWidgetManager->DialogueWidget->SetTargetDialogue(RobotDialogueArray[rndInd]);
 }
 
 void ARobotToRepair::ChoosePairedDialogue(TArray<FStringArray> PairedDialogueArray)
 {
 	int rndInd = FMath::RandRange(0, PairedDialogueArray.Num() - 1);
-	HomeGameMode->DialogueWidget->SetPlayerDialogue(PairedDialogueArray[rndInd].StringArray[0]);
-	HomeGameMode->DialogueWidget->SetTargetDialogue(PairedDialogueArray[rndInd].StringArray[1]);
+	HomeGameMode->HomeWidgetManager->DialogueWidget->SetPlayerDialogue(PairedDialogueArray[rndInd].StringArray[0]);
+	HomeGameMode->HomeWidgetManager->DialogueWidget->SetTargetDialogue(PairedDialogueArray[rndInd].StringArray[1]);
 }
 
 void ARobotToRepair::ShowSecondDialogue()
 {
-	HomeGameMode->DialogueWidget->ShowTargetDialogue();
+	HomeGameMode->HomeWidgetManager->DialogueWidget->ShowTargetDialogue();
 	bCanInteract = true;
+	PlayerController->EnableUIActions();
 }

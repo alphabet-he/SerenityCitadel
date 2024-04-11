@@ -52,14 +52,14 @@ void ARobotMinimap::BeginPlay()
 void ARobotMinimap::ArriveAtTarget(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (Cast<AMinimapPawn>(OtherActor)) {
-		HomeGameMode->ControlPanelWidget->EnableZoomInButton();
+		HomeGameMode->HomeWidgetManager->ControlPanelWidget->EnableZoomInButton();
 	}
 }
 
 void ARobotMinimap::LeaveTarget(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (Cast<AMinimapPawn>(OtherActor)) {
-		HomeGameMode->ControlPanelWidget->DisableZoomInButton();
+		HomeGameMode->HomeWidgetManager->ControlPanelWidget->DisableZoomInButton();
 	}
 }
 

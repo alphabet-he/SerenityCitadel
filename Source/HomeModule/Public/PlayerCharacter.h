@@ -10,6 +10,7 @@
  * 
  */
 class AMinimapPawn;
+class UHomeWidgetManager;
 
 UCLASS()
 class HOMEMODULE_API APlayerCharacter : public ASerenityCitadelCharacter
@@ -22,6 +23,7 @@ public:
 	APlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
 	void HandleMove(const FInputActionValue& Value) override;
+	void HandleEsc() override;
 
 	void SetControlledMinimapPawn(AMinimapPawn* p) {
 		ControlledMinimapPawn = p;
@@ -31,7 +33,13 @@ public:
 		ControllingMinimapPawn = controlling;
 	}
 
+	void SetHomeWidgetManager(UHomeWidgetManager* manager) {
+		HomeWidgetManager = manager;
+	}
+
 private:
 	AMinimapPawn* ControlledMinimapPawn;
 	bool ControllingMinimapPawn = false;
+
+	UHomeWidgetManager* HomeWidgetManager;
 };

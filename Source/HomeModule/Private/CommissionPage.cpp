@@ -20,10 +20,6 @@ void UCommissionPage::NativeConstruct()
 
 	HomeGameMode = Cast<AHomeGameMode>(UGameplayStatics::GetGameMode(this));
 	check(HomeGameMode);
-
-	PlayerController = HomeGameMode->GetPlayerController();
-
-	PlayerCharacter = HomeGameMode->GetPlayerCharacter();
 }
 
 void UCommissionPage::ClickCommissionDetail()
@@ -60,6 +56,8 @@ void UCommissionPage::ClickCommissionDetail()
 
 void UCommissionPage::AcceptCommission()
 {
+
+
 	if (!PlayerCharacter) {
 		PlayerCharacter = HomeGameMode->GetPlayerCharacter();
 	}
@@ -68,34 +66,33 @@ void UCommissionPage::AcceptCommission()
 		PlayerController = HomeGameMode->GetPlayerController();
 	}
 
-	if (HomeGameMode->InTransitWidget) {
-		HomeGameMode->InTransitWidget->AddToViewport();
+	PlayerController->DisableUIActions();
+	PlayerController->DisableInteraction();
 
-		HomeGameMode->DesktopWidget->RemoveFromParent();
-		PlayerCharacter->RemoveWidget(HomeGameMode->DesktopWidget);
+	HomeGameMode->HomeWidgetManager->ShowInTransit();
 
-		this->RemoveFromParent();
-		PlayerCharacter->RemoveWidget(this);
+	HomeGameMode->CommissionSpawn(currCommissionButton);
 
-		HomeGameMode->CommissionSpawn(currCommissionButton);
+	// switch buttons
+	AcceptButton->SetVisibility(ESlateVisibility::Hidden);
+	RejectButton->SetVisibility(ESlateVisibility::Hidden);
+	CompleteButton->SetVisibility(ESlateVisibility::Visible);
+	WithdrawButton->SetVisibility(ESlateVisibility::Visible);
+	AcceptedStatus->SetVisibility(ESlateVisibility::Visible);
+	bDealt = true;
 
-		// switch buttons
-		AcceptButton->SetVisibility(ESlateVisibility::Hidden);
-		RejectButton->SetVisibility(ESlateVisibility::Hidden);
-		CompleteButton->SetVisibility(ESlateVisibility::Visible);
-		WithdrawButton->SetVisibility(ESlateVisibility::Visible);
-		AcceptedStatus->SetVisibility(ESlateVisibility::Visible);
-		bDealt = true;
-
-		FTimerHandle Handle;
-		GetWorld()->GetTimerManager().SetTimer(Handle, this, &UCommissionPage::CommissionAcceptedEnd, 1.0f);
-		//CommissionAcceptedEnd();
-	}
+	FTimerHandle Handle;
+	GetWorld()->GetTimerManager().SetTimer(Handle, this, &UCommissionPage::CommissionAcceptedEnd, 1.0f);
+	//CommissionAcceptedEnd();
+	
 }
 
 void UCommissionPage::CommissionAcceptedEnd()
 {
-	HomeGameMode->InTransitWidget->RemoveFromParent();
+	HomeGameMode->HomeWidgetManager->HideAllWidgets();
+
+	PlayerController->EnableUIActions();
+	PlayerController->EnableInteraction();
 
 	PlayerController->DisableMouseCursor();
 	PlayerController->EnableMovementAndAction();

@@ -186,8 +186,8 @@ bool ACommonFarmManager::Analyze()
 	}
 
 	// show analysis panel
-	if (FarmingWidget->AnalysisPanel->GetVisibility() == ESlateVisibility::Hidden) {
-		FarmingWidget->AnalysisPanel->SetVisibility(ESlateVisibility::Visible);
+	if (!FarmingWidget->AnalysisPanel->IsVisible()) {
+		FarmingWidget->ShowAnalysis();
 	}
 
 	// set battery
@@ -493,12 +493,12 @@ void ACommonFarmManager::UpdateFarmingWidgetSuggestions(FCoordinate2D coordinate
 {
 	AFarmingGrid* grid = GridPtrMap.GetElement(coordinate.Row, coordinate.Column);
 
-	if (FarmingWidget->Dry->Visibility == ESlateVisibility::Visible
+	if (FarmingWidget->Dry->IsVisible()
 		&& grid->MoisturePercent >= PlantGrowthMoistureThreshold) {
 		FarmingWidget->Dry->SetVisibility(ESlateVisibility::Hidden);
 	}
 
-	if (FarmingWidget->Polluted->Visibility == ESlateVisibility::Visible
+	if (FarmingWidget->Polluted->IsVisible()
 		&& grid->PollutionPercent <= PlantGrowthPollutionThreshold) {
 		FarmingWidget->Polluted->SetVisibility(ESlateVisibility::Hidden);
 	}
@@ -520,7 +520,7 @@ void ACommonFarmManager::StartCheckAnalysisPanel()
 
 void ACommonFarmManager::CheckAnalysisPanelVisibility()
 {
-	if (FarmingWidget->AnalysisPanel->Visibility == ESlateVisibility::Visible) {
+	if (FarmingWidget->AnalysisPanel->IsVisible()) {
 		if (FVector::Dist(PlayerCharacter->GetActorLocation(), LastAnalysisPlayerLocation)
 			>= HideAnalysisPanelThreshold) {
 			FarmingWidget->HideAnalysis();

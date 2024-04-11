@@ -40,23 +40,10 @@ void AComputer::InteractWithPlayer()
 		PlayerController = HomeGameMode->GetPlayerController();
 	}
 
-	if (!HomeGameMode->DesktopWidget) {
-		UE_LOG(LogTemp, Warning, TEXT("No desktop widget instance"));
-		return;
-	}
-
 	// there is widget showing
-	if (PlayerCharacter->GetActiveWidgets().Contains(HomeGameMode->DesktopWidget))
+	if (!EToInteractWidget->IsVisible())
 	{
-		HomeGameMode->DesktopWidget->RemoveFromParent();
-		PlayerCharacter->RemoveWidget(HomeGameMode->DesktopWidget);
-
-		// if commission widget is showing
-		if (HomeGameMode->CommissionPageWidget &&
-			PlayerCharacter->GetActiveWidgets().Contains(HomeGameMode->CommissionPageWidget)) {
-			HomeGameMode->CommissionPageWidget->RemoveFromParent();
-			PlayerCharacter->RemoveWidget(HomeGameMode->CommissionPageWidget);
-		}
+		HomeGameMode->HomeWidgetManager->HideAllWidgets();
 
 		PlayerController->DisableMouseCursor();
 		PlayerController->EnableMovementAndAction();
@@ -67,9 +54,7 @@ void AComputer::InteractWithPlayer()
 
 	else 
 	{
-		HomeGameMode->DesktopWidget->AddToViewport();
-			
-		PlayerCharacter->AddActiveWdiget(HomeGameMode->DesktopWidget);
+		HomeGameMode->HomeWidgetManager->ShowDesktop();
 
 		PlayerController->EnableMouseCursor();
 		PlayerController->DisableMovementAndAction();

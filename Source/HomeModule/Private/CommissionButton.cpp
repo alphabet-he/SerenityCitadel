@@ -18,5 +18,5 @@ void UCommissionButton::OnClick()
 		HomeGameMode = Cast<AHomeGameMode>(UGameplayStatics::GetGameMode(this));
 	}
 
-	HomeGameMode->CommissionPageWidget->SetCurrCommissionButton(this);
+	HomeGameMode->HomeWidgetManager->CommissionPageWidget->SetCurrCommissionButton(this);
 }

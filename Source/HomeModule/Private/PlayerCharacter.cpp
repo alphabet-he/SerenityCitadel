@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
 #include "MinimapPawn.h"
+#include "HomeWidgetManager.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
@@ -61,5 +62,15 @@ void APlayerCharacter::HandleMove(const FInputActionValue& Value)
 
 	else {
 		Super::HandleMove(Value);
+	}
+}
+
+void APlayerCharacter::HandleEsc()
+{
+	if (!HomeWidgetManager) {
+		UE_LOG(LogTemp, Warning, TEXT("No Home Widget Manager defined for the home player character."));
+	}
+	else {
+		HomeWidgetManager->HandleEsc();
 	}
 }

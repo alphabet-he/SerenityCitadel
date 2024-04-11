@@ -15,26 +15,17 @@ void AHomeGameMode::StartPlay()
 {
 	Super::StartPlay();
 
-	DesktopWidget = CreateWidget<UComputerDesktop>(GetWorld(), DesktopWidgetClass);
-	//DesktopWidget->RemoveFromParent();
-
-	CommissionPageWidget = CreateWidget<UCommissionPage>(GetWorld(), CommissionPageWidgetClass);
-	//CommissionPageWidget->RemoveFromParent();
-
-	InTransitWidget = CreateWidget<UInTransitWidget>(GetWorld(), InTransitWidgetClass);
-	//InTransitWidget->RemoveFromParent();
-
-	DialogueWidget = CreateWidget<UDialogueWidget>(GetWorld(), DialogueWidgetClass);
-	//DialogueWidget->RemoveFromParent();
-
-	ControlPanelWidget = CreateWidget<UControlPanelWidget>(GetWorld(), ControlPanelWidgetClass);
-	//ControlPanelWidget->RemoveFromParent();
+	HomeWidgetManager = CreateWidget<UHomeWidgetManager>(GetWorld(), HomeWidgetManagerClass);
+	HomeWidgetManager->AddToViewport();
+	check(HomeWidgetManager);
 
 	PlayerController = Cast<APlayerControllerTest>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	check(PlayerController);
 
 	PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPlayerCharacter());
 	check(PlayerCharacter);
+
+	PlayerCharacter->SetHomeWidgetManager(HomeWidgetManager);
 
 	MyGameInstanceSubsystem = Cast<UMyGameInstanceSubsystem>(
 		GetWorld()->GetGameInstance()->GetSubsystem<UMyGameInstanceSubsystem>()
@@ -43,6 +34,7 @@ void AHomeGameMode::StartPlay()
 
 	MyGameInstanceSubsystem->PlayerCharacter = PlayerCharacter;
 	MyGameInstanceSubsystem->bStartFromHome = true;
+	MyGameInstanceSubsystem->HomeWidgetManager = HomeWidgetManager;
 
 	MainRobot = Cast<AMainRobot>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainRobot::StaticClass()));
 	check(MainRobot);

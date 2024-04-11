@@ -72,6 +72,18 @@ public:
 	void EnableAction();
 
 	UFUNCTION()
+	void DisableUIActions();
+
+	UFUNCTION()
+	void EnableUIActions();
+
+	UFUNCTION()
+	void DisableInteraction();
+
+	UFUNCTION()
+	void EnableInteraction();
+
+	UFUNCTION()
 	void EnableMouseCursor();
 
 	UFUNCTION()

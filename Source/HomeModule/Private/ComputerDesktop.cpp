@@ -36,14 +36,7 @@ void UComputerDesktop::OpenCommissionPage()
 		PlayerCharacter = HomeGameMode->GetPlayerCharacter();
 	}
 
-	if (HomeGameMode->CommissionPageWidget) {
-		HomeGameMode->CommissionPageWidget->AddToViewport();
-		//HomeGameMode->DesktopWidget->RemoveFromViewport();
-		PlayerCharacter->AddActiveWdiget(HomeGameMode->CommissionPageWidget);
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("No Commission Page Instance"));
-	}
+	HomeGameMode->HomeWidgetManager->ShowCommissionPage();
 }
 
 void UComputerDesktop::OpenMarketPage()

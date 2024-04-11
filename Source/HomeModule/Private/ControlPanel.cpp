@@ -23,14 +23,9 @@ void AControlPanel::InteractWithPlayer()
 		PlayerController = HomeGameMode->GetPlayerController();
 	}
 
-	if (!HomeGameMode->ControlPanelWidget) {
-		return;
-	}
+	if (!EToInteractWidget->IsVisible()) {
 
-	if (PlayerCharacter->GetActiveWidgets().Contains(HomeGameMode->ControlPanelWidget)) {
-
-		HomeGameMode->ControlPanelWidget->RemoveFromParent();
-		PlayerCharacter->RemoveWidget(HomeGameMode->ControlPanelWidget);
+		HomeGameMode->HomeWidgetManager->HideAllWidgets();
 		PlayerController->DisableMouseCursor();
 		PlayerController->EnableMovementAndAction();
 
@@ -41,8 +36,7 @@ void AControlPanel::InteractWithPlayer()
 
 	else {
 
-		HomeGameMode->ControlPanelWidget->AddToViewport();
-		PlayerCharacter->AddActiveWdiget(HomeGameMode->ControlPanelWidget);
+		HomeGameMode->HomeWidgetManager->ShowControlPanel();
 		PlayerController->EnableMouseCursor();
 		PlayerController->DisableMovementAndAction();
 

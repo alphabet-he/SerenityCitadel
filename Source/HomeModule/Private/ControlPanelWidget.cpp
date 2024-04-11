@@ -17,16 +17,12 @@ void UControlPanelWidget::NativeConstruct()
 
 	HomeGameMode = Cast<AHomeGameMode>(UGameplayStatics::GetGameMode(this));
 	check(HomeGameMode);
-
-	PlayerController = HomeGameMode->GetPlayerController();
-
-	PlayerCharacter = Cast<APlayerCharacter>(HomeGameMode->GetPlayerCharacter());
 }
 
 void UControlPanelWidget::ClickZoomInButton()
 {
-	this->RemoveFromParent();
-	PlayerCharacter->RemoveWidget(this);
+	HomeGameMode->HomeWidgetManager->HideAllWidgets();
+
 	PlayerController->DisableMouseCursor();
 	PlayerController->EnableMovementAndAction();
 
@@ -40,6 +36,14 @@ void UControlPanelWidget::ClickZoomInButton()
 
 void UControlPanelWidget::ClickDispatchButton()
 {
+	if (!PlayerController) {
+		PlayerController = HomeGameMode->GetPlayerController();
+	}
+	
+	if (!PlayerCharacter) {
+		PlayerCharacter = HomeGameMode->GetPlayerCharacter();
+	}
+
 	RecallButton->SetIsEnabled(true);
 	DispatchButton->SetIsEnabled(false);
 
@@ -62,6 +66,14 @@ void UControlPanelWidget::ClickRecallButton()
 
 void UControlPanelWidget::ClickPowerOnButton()
 {
+	if (!PlayerController) {
+		PlayerController = HomeGameMode->GetPlayerController();
+	}
+
+	if (!PlayerCharacter) {
+		PlayerCharacter = HomeGameMode->GetPlayerCharacter();
+	}
+
 	PlayerController->DisableMouseCursor();
 	if (HomeGameMode->GetMyGameInstanceSubsystem()->bRobotFixed) {
 		Succeeded->SetVisibility(ESlateVisibility::Visible);
@@ -73,6 +85,8 @@ void UControlPanelWidget::ClickPowerOnButton()
 		PowerOnButton->SetIsEnabled(false);
 		FTimerHandle Handle;
 		GetWorld()->GetTimerManager().SetTimer(Handle, this, &UControlPanelWidget::HideFailedNotice, 1.5f);
+		PlayerController->DisableInteraction();
+		PlayerController->DisableUIActions();
 	}
 
 }
@@ -82,4 +96,6 @@ void UControlPanelWidget::HideFailedNotice()
 	Failed->SetVisibility(ESlateVisibility::Hidden);
 	PlayerController->EnableMouseCursor();
 	PowerOnButton->SetIsEnabled(true);
+	PlayerController->EnableInteraction();
+	PlayerController->EnableUIActions();
 }

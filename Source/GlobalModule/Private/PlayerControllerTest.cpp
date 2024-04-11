@@ -78,6 +78,7 @@ void APlayerControllerTest::OnPossess(APawn* aPawn)
 void APlayerControllerTest::OnUnPossess()
 {
 	InputSubsystem->ClearAllMappings();
+	EnhancedInputComponent->ClearActionBindings();
 	Super::OnUnPossess();
 }
 
@@ -119,6 +120,34 @@ void APlayerControllerTest::EnableAction()
 {
 	if (!InputSubsystem->HasMappingContext(ActionMappingContent)) {
 		InputSubsystem->AddMappingContext(ActionMappingContent, 0);
+	}
+}
+
+void APlayerControllerTest::DisableUIActions()
+{
+	if (InputSubsystem->HasMappingContext(UIActionMappingContent)) {
+		InputSubsystem->RemoveMappingContext(UIActionMappingContent);
+	}
+}
+
+void APlayerControllerTest::EnableUIActions()
+{
+	if (!InputSubsystem->HasMappingContext(UIActionMappingContent)) {
+		InputSubsystem->AddMappingContext(UIActionMappingContent, 0);
+	}
+}
+
+void APlayerControllerTest::DisableInteraction()
+{
+	if (InputSubsystem->HasMappingContext(InteractionMappingContent)) {
+		InputSubsystem->RemoveMappingContext(InteractionMappingContent);
+	}
+}
+
+void APlayerControllerTest::EnableInteraction()
+{
+	if (!InputSubsystem->HasMappingContext(InteractionMappingContent)) {
+		InputSubsystem->AddMappingContext(InteractionMappingContent, 0);
 	}
 }
 

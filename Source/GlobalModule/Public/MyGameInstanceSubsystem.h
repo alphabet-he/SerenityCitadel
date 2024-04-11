@@ -62,6 +62,8 @@ public:
 
 	UUserWidget* FarmingWidget = nullptr;
 
+	UUserWidget* HomeWidgetManager = nullptr;
+
 	void SwitchToFarmLevel(FName levelName);
 
 	void SwitchToHome();

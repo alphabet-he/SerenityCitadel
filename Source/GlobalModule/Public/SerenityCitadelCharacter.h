@@ -59,16 +59,10 @@ public:
 	virtual void HandleSwitchProp();
 	virtual void HandleAnalyze();
 
-	void AddActiveWdiget(UUserWidget* widget) { ActiveWidgets.Push(widget); }
-	TArray<UUserWidget*> GetActiveWidgets() { return ActiveWidgets; }
-	UUserWidget* GetWidgetOnTop() { return ActiveWidgets.Top(); }
-	void ClearAllWidgets() { ActiveWidgets.Empty(); }
-	void RemoveWidget(UUserWidget* widget) { ActiveWidgets.Remove(widget); }
-
 	void SetPlayerController(APlayerControllerTest* pc) { PlayerController = pc; }
 	APlayerControllerTest* GetPlayerController() { return PlayerController; }
 
-	void PauseGame();
+	virtual void PauseGame();
 
 	void ShowEToInteract();
 

@@ -106,21 +106,6 @@ void ASerenityCitadelCharacter::HandleInteract()
 
 void ASerenityCitadelCharacter::HandleEsc()
 {
-	if (ActiveWidgets.Num() == 0) {
-		PauseGame();
-	}
-
-	else {
-		UUserWidget* widget = ActiveWidgets.Pop();
-		widget->RemoveFromParent();
-		if (ActiveWidgets.Num() == 0) {
-			// if no UI is shown, enable movement
-			PlayerController->DisableMouseCursor();
-			PlayerController->EnableMovementAndAction();
-
-			ShowEToInteract();
-		}
-	}
 }
 
 void ASerenityCitadelCharacter::HandleExitFarm()
