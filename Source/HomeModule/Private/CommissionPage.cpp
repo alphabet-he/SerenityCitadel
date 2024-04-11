@@ -91,13 +91,13 @@ void UCommissionPage::CommissionAcceptedEnd()
 {
 	HomeGameMode->HomeWidgetManager->HideAllWidgets();
 
-	PlayerController->EnableUIActions();
-	PlayerController->EnableInteraction();
-
 	PlayerController->DisableMouseCursor();
 	PlayerController->EnableMovementAndAction();
 
 	PlayerCharacter->ShowEToInteract();
+
+	PlayerController->EnableUIActions();
+	PlayerController->EnableInteraction();
 }
 
 void UCommissionPage::SetCurrCommissionButton(UCommissionButton* commissionButton)

@@ -15,17 +15,12 @@ void AHomeGameMode::StartPlay()
 {
 	Super::StartPlay();
 
-	HomeWidgetManager = CreateWidget<UHomeWidgetManager>(GetWorld(), HomeWidgetManagerClass);
-	HomeWidgetManager->AddToViewport();
-	check(HomeWidgetManager);
 
 	PlayerController = Cast<APlayerControllerTest>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	check(PlayerController);
 
 	PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPlayerCharacter());
 	check(PlayerCharacter);
-
-	PlayerCharacter->SetHomeWidgetManager(HomeWidgetManager);
 
 	MyGameInstanceSubsystem = Cast<UMyGameInstanceSubsystem>(
 		GetWorld()->GetGameInstance()->GetSubsystem<UMyGameInstanceSubsystem>()
@@ -34,10 +29,14 @@ void AHomeGameMode::StartPlay()
 
 	MyGameInstanceSubsystem->PlayerCharacter = PlayerCharacter;
 	MyGameInstanceSubsystem->bStartFromHome = true;
-	MyGameInstanceSubsystem->HomeWidgetManager = HomeWidgetManager;
 
 	MainRobot = Cast<AMainRobot>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainRobot::StaticClass()));
 	check(MainRobot);
+
+	HomeWidgetManager = Cast<UHomeWidgetManager>(MyGameInstanceSubsystem->HomeWidgetManager);
+	check(HomeWidgetManager);
+	MyGameInstanceSubsystem->GlobalWidgetManager->ShowHomeLevelWidget();
+	PlayerCharacter->SetHomeWidgetManager(HomeWidgetManager);
 }
 
 void AHomeGameMode::SpawnMinimapPawn()

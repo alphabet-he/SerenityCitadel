@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "SerenityCitadelCharacter.h"
+#include "GlobalWidgetManager.h"
 #include "MyGameInstanceSubsystem.generated.h"
 
 /**
@@ -60,6 +61,8 @@ public:
 
 	TSubclassOf<UUserWidget> FarmingWidgetClass = nullptr;
 
+	UGlobalWidgetManager* GlobalWidgetManager;
+
 	UUserWidget* FarmingWidget = nullptr;
 
 	UUserWidget* HomeWidgetManager = nullptr;
@@ -72,4 +75,7 @@ public:
 		FarmingWidget = CreateWidget<UUserWidget>(GetWorld(), FarmingWidgetClass);
 		return FarmingWidget;
 	};
+
+	UFUNCTION(BlueprintCallable)
+	void InitializeGlobalWidgetManager(TSubclassOf<UGlobalWidgetManager> managerClass);
 };

@@ -35,18 +35,7 @@ void ACommonFarmManager::BeginPlay()
 	);
 	check(MyGameInstanceSubsystem);
 
-	// if farming widget is not initialized, initialize it
-	if (!MyGameInstanceSubsystem->FarmingWidgetClass
-		&& FarmingWidgetClass) {
-		MyGameInstanceSubsystem->FarmingWidgetClass = FarmingWidgetClass;
-		FarmingWidget = Cast<UFarmingWidget>(MyGameInstanceSubsystem->CreateFarmingWidget());
-
-	}
-	// farming widget is already initialized
-	else {
-		FarmingWidget = Cast<UFarmingWidget>(MyGameInstanceSubsystem->FarmingWidget);
-	}
-	check(FarmingWidget);
+	FarmingWidget = Cast<UFarmingWidget>(MyGameInstanceSubsystem->FarmingWidget);
 
 	// get player character of the farm
 	PlayerCharacter = Cast<AFarmingRobotCharacter>(MyGameInstanceSubsystem->MicroRobotList[FarmName]);
@@ -55,7 +44,7 @@ void ACommonFarmManager::BeginPlay()
 
 	// if starts from farm itself
 	if (!MyGameInstanceSubsystem->bStartFromHome) {
-		FarmingWidget->AddToViewport();
+		MyGameInstanceSubsystem->GlobalWidgetManager->ShowFarmLevelWidget();
 	}
 }
 

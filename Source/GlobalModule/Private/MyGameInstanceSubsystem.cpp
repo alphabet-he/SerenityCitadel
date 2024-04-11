@@ -23,13 +23,7 @@ void UMyGameInstanceSubsystem::SwitchToFarmLevel(FName levelName)
 		UE_LOG(LogTemp, Warning, TEXT("Micro robot not spawned"));
 	}
 
-	if (HomeWidgetManager) {
-		HomeWidgetManager->RemoveFromParent();
-	}
-
-	if (FarmingWidget) {
-		FarmingWidget->AddToViewport();
-	}
+	GlobalWidgetManager->ShowFarmLevelWidget();
 	
 }
 
@@ -52,12 +46,16 @@ void UMyGameInstanceSubsystem::SwitchToHome()
 		UE_LOG(LogTemp, Warning, TEXT("Cannot find home player character"));
 	}
 
-	if (FarmingWidget) {
-		FarmingWidget->RemoveFromParent();
-	}
-
-	if (HomeWidgetManager) {
-		HomeWidgetManager->AddToViewport();
-	}
+	GlobalWidgetManager->ShowHomeLevelWidget();
 	
+}
+
+void UMyGameInstanceSubsystem::InitializeGlobalWidgetManager(TSubclassOf<UGlobalWidgetManager> managerClass)
+{
+	GlobalWidgetManager = CreateWidget<UGlobalWidgetManager>(GetWorld(), managerClass);
+	GlobalWidgetManager->AddToViewport();
+	check(GlobalWidgetManager);
+
+	FarmingWidget = GlobalWidgetManager->GetFarmLevelWidget();
+	HomeWidgetManager = GlobalWidgetManager->GetHomeLevelWidget();
 }
