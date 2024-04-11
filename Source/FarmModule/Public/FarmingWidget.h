@@ -78,6 +78,7 @@ public:
 		AnalysisPanel->SetVisibility(ESlateVisibility::Hidden);
 		Height->SetVisibility(ESlateVisibility::Hidden);
 		Moisture->SetVisibility(ESlateVisibility::Hidden);
+		Pollution->SetVisibility(ESlateVisibility::Hidden);
 		GrowingProb->SetVisibility(ESlateVisibility::Hidden);
 		Dry->SetVisibility(ESlateVisibility::Hidden);
 		Polluted->SetVisibility(ESlateVisibility::Hidden);
@@ -88,6 +89,7 @@ public:
 		AnalysisPanel->SetVisibility(ESlateVisibility::Visible);
 		Height->SetVisibility(ESlateVisibility::Visible);
 		Moisture->SetVisibility(ESlateVisibility::Visible);
+		Pollution->SetVisibility(ESlateVisibility::Visible);
 		GrowingProb->SetVisibility(ESlateVisibility::Visible);
 	}
 

@@ -35,17 +35,26 @@ void ACommonFarmManager::BeginPlay()
 	);
 	check(MyGameInstanceSubsystem);
 
-	FarmingWidget = Cast<UFarmingWidget>(MyGameInstanceSubsystem->FarmingWidget);
-
 	// get player character of the farm
-	PlayerCharacter = Cast<AFarmingRobotCharacter>(MyGameInstanceSubsystem->MicroRobotList[FarmName]);
+	if (!MyGameInstanceSubsystem->bStartFromHome) {
+		PlayerCharacter = Cast<AFarmingRobotCharacter>(PlayerController->GetPlayerCharacter());
+	}
+	else {
+		PlayerCharacter = Cast<AFarmingRobotCharacter>(MyGameInstanceSubsystem->MicroRobotList[FarmName]);
+	}
+	
 	check(PlayerCharacter);
 	PlayerCharacter->SetFarmManager(this);
 
 	// if starts from farm itself
 	if (!MyGameInstanceSubsystem->bStartFromHome) {
-		MyGameInstanceSubsystem->GlobalWidgetManager->ShowFarmLevelWidget();
+		FarmingWidget = CreateWidget<UFarmingWidget>(GetWorld(), FarmingWidgetClass);
+		FarmingWidget->AddToViewport();
 	}
+	else {
+		FarmingWidget = Cast<UFarmingWidget>(MyGameInstanceSubsystem->FarmingWidget);
+	}
+	check(FarmingWidget);
 }
 
 void ACommonFarmManager::UpdateAllGrids()
