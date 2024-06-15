@@ -440,8 +440,10 @@ TArray2D<float> ACommonFarmManager::GeneratePerlinNoiseMap(int rowSize, int colu
 	{
 		for (int j = 0; j < columnSize; j++) {
 
-			float rowSample = (float)i / rowSize * noiseMapParams.inputRange[0] + seed;
-			float columnSample = (float)j / columnSize * noiseMapParams.inputRange[1] + seed;
+			float rowSample = (float)i / rowSize * (noiseMapParams.inputRange[1] - noiseMapParams.inputRange[0])
+				+ noiseMapParams.inputRange[1] + seed;
+			float columnSample = (float)j / columnSize * (noiseMapParams.inputRange[1] - noiseMapParams.inputRange[0])
+				+ noiseMapParams.inputRange[1] + seed;
 
 			float value = FMath::PerlinNoise2D(FVector2D{ columnSample, rowSample }) * multiplier;
 			if (value > maxVal) maxVal = value;

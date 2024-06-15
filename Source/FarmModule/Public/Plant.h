@@ -15,6 +15,7 @@ class FARMMODULE_API APlant : public AGroundEntity
 public:	
 	// Sets default values for this actor's properties
 	APlant();
+
 	UPROPERTY()
 	int PlantType = -1;
 
