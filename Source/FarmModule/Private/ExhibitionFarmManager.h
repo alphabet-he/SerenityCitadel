@@ -7,9 +7,10 @@
 #include "TArray2D.h"
 #include "ExhibitionFarmManager.generated.h"
 
-class AFarmingGrid;
+class AExhibitionGrid;
 class APlant;
 struct FNoiseMapParams;
+class AExhibitionGameMode;
 
 UENUM(BlueprintType)
 enum class EExhibitionGrid : uint8 {
@@ -52,15 +53,30 @@ protected:
 protected:
 	TArray2D<EExhibitionGrid> GridMap;
 	TArray2D<float> GreenValue;
-	TArray2D<AFarmingGrid*> GridPtrMap;
+	TArray2D<AExhibitionGrid*> GridPtrMap;
 	TArray2D<APlant*> PlantMap;
+	AExhibitionGameMode* ExhibitionGameMode;
 
 public:
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AFarmingGrid> BP_GridActor;
+	TSubclassOf<AExhibitionGrid> BP_GridActor;
 
 	/** Polluted, Dirt, Grass, Water */
 	UPROPERTY(EditAnywhere)
 	TArray<UMaterialInstance*> GridTextures;
+
+	UPROPERTY(EditAnywhere)
+	int RowSize;
+
+	UPROPERTY(EditAnywhere)
+	int ColumnSize;
+
+	TArray2D<EExhibitionGrid> GetGridMap() {
+		return GridMap;
+	}
+
+	TArray2D<AExhibitionGrid*> GetGridPtrMap() {
+		return GridPtrMap;
+	}
 };

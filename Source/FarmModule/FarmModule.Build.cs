@@ -19,7 +19,8 @@ public class FarmModule : ModuleRules
 			"SerenityCitadel",
             "InputCore",
             "EnhancedInput",
-            "NinjaCharacter"
+            "NinjaCharacter",
+            "AIModule"
         });
 	}
 }

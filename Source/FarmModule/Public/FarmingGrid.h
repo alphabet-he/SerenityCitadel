@@ -52,6 +52,9 @@ public:
 
 	AGroundEntity* EntityAbove = nullptr;
 
+	UPROPERTY(VisibleAnywhere)
+	FCoordinate2D coordinate{-1, -1};
+
 public:	
 
 	void setGridType(EGridType i) { GridType = i; };

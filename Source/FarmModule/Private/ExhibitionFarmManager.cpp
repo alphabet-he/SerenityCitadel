@@ -2,9 +2,11 @@
 
 
 #include "ExhibitionFarmManager.h"
-#include "FarmingGrid.h"
+#include "ExhibitionGrid.h"
 #include "Plant.h"
 #include "NoiseMapParams.h"
+#include "ExhibitionGameMode.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AExhibitionFarmManager::AExhibitionFarmManager()
@@ -18,6 +20,31 @@ AExhibitionFarmManager::AExhibitionFarmManager()
 void AExhibitionFarmManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ExhibitionGameMode = Cast<AExhibitionGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	ExhibitionGameMode->ExhibitionFarmManager = this;
+
+	TArray<AActor*> grids;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), BP_GridActor, grids);
+
+	GridMap.Init(RowSize, ColumnSize, EExhibitionGrid::DIRT);
+	GreenValue.Init(RowSize, ColumnSize, 0);
+	GridPtrMap.Init(RowSize, ColumnSize, nullptr);
+	PlantMap.Init(RowSize, ColumnSize, nullptr);
+
+	for (AActor* grid : grids) {
+		AExhibitionGrid* farmingGrid = Cast<AExhibitionGrid>(grid);
+		if (farmingGrid) {
+			FCoordinate2D coordinate = farmingGrid->coordinate;
+			GridMap.SetElement(coordinate.Row, coordinate.Column, farmingGrid->ExhibitionGridType);
+			GridPtrMap.SetElement(coordinate.Row, coordinate.Column, farmingGrid);
+
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Error"));
+			return;
+		}
+	}
 	
 }
 
@@ -90,18 +117,18 @@ TArray<float> AExhibitionFarmManager::GenerateGeometry(int rowSize, int columnSi
 	TArray2D<float> heightMap = GeneratePerlinNoiseMap(rowSize, columnSize, heightNoiseMapParams, heightSeed);
 	TArray2D<float> pollutionMap = GeneratePerlinNoiseMap(rowSize, columnSize, pollutionNoiseMapParams, pollutionSeed);
 
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
 	GridMap.Init(rowSize, columnSize, EExhibitionGrid::DIRT);
 	GreenValue.Init(rowSize, columnSize, 0);
 	GridPtrMap.Init(rowSize, columnSize, nullptr);
 	PlantMap.Init(rowSize, columnSize, nullptr);
 
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
 	for (int i = 0; i < rowSize; i++) {
 		for (int j = 0; j < columnSize; j++)
 		{
-			AFarmingGrid* grid = GetWorld()->SpawnActor<AFarmingGrid>(BP_GridActor, 
+			AExhibitionGrid* grid = GetWorld()->SpawnActor<AExhibitionGrid>(BP_GridActor,
 				FVector(j * 50, i * 50, heightMap.GetElement(i, j)), FRotator(0, 0, 0), SpawnParameters);
 			if (grid) {
 				GridPtrMap.SetElement(i, j, grid);
@@ -115,6 +142,8 @@ TArray<float> AExhibitionFarmManager::GenerateGeometry(int rowSize, int columnSi
 					GridMap.SetElement(i, j, EExhibitionGrid::POLLUTED);
 				}
 
+				grid->coordinate = FCoordinate2D(i, j);
+				grid->ExhibitionGridType = GridMap.GetElement(i, j);
 				grid->UpdateGrid(GridTextures[static_cast<int>(GridMap.GetElement(i, j))]);
 			}
 		}
