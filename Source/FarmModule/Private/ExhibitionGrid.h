@@ -16,7 +16,12 @@ class AExhibitionGrid : public AFarmingGrid
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 	EExhibitionGrid ExhibitionGridType;
+
+	UFUNCTION(BlueprintCallable)
+	EExhibitionGrid GetType() {
+		return ExhibitionGridType;
+	}
 	
 };
