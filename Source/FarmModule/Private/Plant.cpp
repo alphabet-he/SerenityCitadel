@@ -7,7 +7,27 @@
 APlant::APlant()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+
+	USceneComponent* _RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root Component"));
+
+	RootComponent = _RootComponent;
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh->SetupAttachment(RootComponent);
+}
+
+bool APlant::Grow(bool bExecute)
+{
+	if (CurrentGrowthState == GrowthStateModels.Num() - 1) {
+		return false;
+	}
+	if (bExecute) {
+		CurrentGrowthState++;
+		Mesh->SetStaticMesh(GrowthStateModels[CurrentGrowthState]);
+	}
+	
+	return true;
 
 }
 
@@ -15,7 +35,10 @@ APlant::APlant()
 void APlant::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	if (GrowthStateModels.Num() > 0 &&
+		!Mesh->GetStaticMesh()) {
+		Mesh->SetStaticMesh(GrowthStateModels[CurrentGrowthState]);
+	}
 }
 
 // Called every frame

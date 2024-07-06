@@ -50,14 +50,27 @@ protected:
 
 	void OperatePlant(APlant* plant);
 
+	UFUNCTION(BlueprintCallable)
+	AExhibitionGrid* GetGrid(int rowInd, int colInd) {
+		return GridPtrMap.GetElement(rowInd, colInd);
+	};
+
+	// bExecute: do change or only check availability
+	UFUNCTION(BlueprintCallable)
+	bool Operate(int rowInd, int colInd, bool bExecute);
+
 protected:
-	TArray2D<EExhibitionGrid> GridMap;
 	TArray2D<float> GreenValue;
 	TArray2D<AExhibitionGrid*> GridPtrMap;
-	TArray2D<APlant*> PlantMap;
 	AExhibitionGameMode* ExhibitionGameMode;
 
+	UPROPERTY(EditAnywhere)
+	TArray<AExhibitionGrid*> TempGridPtrArray;
+
 public:
+
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<APlant>> PossiblePlants;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AExhibitionGrid> BP_GridActor;
@@ -72,9 +85,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	int ColumnSize;
 
-	TArray2D<EExhibitionGrid> GetGridMap() {
-		return GridMap;
-	}
 
 	TArray2D<AExhibitionGrid*> GetGridPtrMap() {
 		return GridPtrMap;

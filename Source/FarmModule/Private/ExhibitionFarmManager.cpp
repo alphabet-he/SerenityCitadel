@@ -24,27 +24,17 @@ void AExhibitionFarmManager::BeginPlay()
 	ExhibitionGameMode = Cast<AExhibitionGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	ExhibitionGameMode->ExhibitionFarmManager = this;
 
-	TArray<AActor*> grids;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), BP_GridActor, grids);
-
-	GridMap.Init(RowSize, ColumnSize, EExhibitionGrid::DIRT);
 	GreenValue.Init(RowSize, ColumnSize, 0);
 	GridPtrMap.Init(RowSize, ColumnSize, nullptr);
-	PlantMap.Init(RowSize, ColumnSize, nullptr);
 
-	for (AActor* grid : grids) {
-		AExhibitionGrid* farmingGrid = Cast<AExhibitionGrid>(grid);
-		if (farmingGrid) {
-			FCoordinate2D coordinate = farmingGrid->coordinate;
-			GridMap.SetElement(coordinate.Row, coordinate.Column, farmingGrid->ExhibitionGridType);
-			GridPtrMap.SetElement(coordinate.Row, coordinate.Column, farmingGrid);
-
-		}
-		else {
-			UE_LOG(LogTemp, Warning, TEXT("Error"));
-			return;
+	int tempArrInd = 0;
+	for (int i = 0; i < RowSize; i++) {
+		for (int j = 0; j < ColumnSize; j++) {
+			GridPtrMap.SetElement(i, j, TempGridPtrArray[tempArrInd]);
+			tempArrInd++;
 		}
 	}
+	
 	
 }
 
@@ -114,16 +104,17 @@ TArray<float> AExhibitionFarmManager::GenerateGeometry(int rowSize, int columnSi
 {
 	float heightSeed = 0;
 	float pollutionSeed = 0;
+
+	TempGridPtrArray.Empty();
+
 	TArray2D<float> heightMap = GeneratePerlinNoiseMap(rowSize, columnSize, heightNoiseMapParams, heightSeed);
 	TArray2D<float> pollutionMap = GeneratePerlinNoiseMap(rowSize, columnSize, pollutionNoiseMapParams, pollutionSeed);
 
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	GridMap.Init(rowSize, columnSize, EExhibitionGrid::DIRT);
 	GreenValue.Init(rowSize, columnSize, 0);
 	GridPtrMap.Init(rowSize, columnSize, nullptr);
-	PlantMap.Init(rowSize, columnSize, nullptr);
 
 	for (int i = 0; i < rowSize; i++) {
 		for (int j = 0; j < columnSize; j++)
@@ -132,19 +123,21 @@ TArray<float> AExhibitionFarmManager::GenerateGeometry(int rowSize, int columnSi
 				FVector(j * 50, i * 50, heightMap.GetElement(i, j)), FRotator(0, 0, 0), SpawnParameters);
 			if (grid) {
 				GridPtrMap.SetElement(i, j, grid);
+				TempGridPtrArray.Add(grid);
+
+				grid->ExhibitionGridType = EExhibitionGrid::DIRT; // Default type is dirt
 
 				// is water?
 				if (heightMap.GetElement(i, j) < waterHeightThreshold) {
-					GridMap.SetElement(i, j, EExhibitionGrid::WATER);
+					grid->ExhibitionGridType = EExhibitionGrid::WATER;
 				}
 				// is polluted?
 				else if (pollutionMap.GetElement(i, j) > pollutionThreshold) {
-					GridMap.SetElement(i, j, EExhibitionGrid::POLLUTED);
+					grid->ExhibitionGridType =  EExhibitionGrid::POLLUTED;
 				}
 
 				grid->coordinate = FCoordinate2D(i, j);
-				grid->ExhibitionGridType = GridMap.GetElement(i, j);
-				grid->UpdateGrid(GridTextures[static_cast<int>(GridMap.GetElement(i, j))]);
+				grid->UpdateGrid(GridTextures[static_cast<int>(grid->ExhibitionGridType)]);
 			}
 		}
 	}
@@ -168,5 +161,46 @@ void AExhibitionFarmManager::OperatePlant(APlant* plant)
 {
 }
 
+bool AExhibitionFarmManager::Operate(int rowInd, int colInd, bool bExecute)
+{
+	AExhibitionGrid* grid = GridPtrMap.GetElement(rowInd, colInd);
+
+	if (grid->ExhibitionGridType == EExhibitionGrid::WATER) {
+		return false;
+	}
+	if (grid->ExhibitionGridType == EExhibitionGrid::POLLUTED ||
+		grid->ExhibitionGridType == EExhibitionGrid::DIRT) {
+
+		if (bExecute) {
+			int currTypeInt = static_cast<int>(grid->ExhibitionGridType);
+			currTypeInt++;
+			grid->ExhibitionGridType = static_cast<EExhibitionGrid>(currTypeInt);
+			grid->UpdateGrid(GridTextures[currTypeInt]);
+		}
+
+		return true;
+	}
+	if (grid->ExhibitionGridType == EExhibitionGrid::GRASS) {
+		if (grid->EntityAbove && 
+			Cast<APlant>(grid->EntityAbove)) {
+			// has plant
+			APlant* plant = Cast<APlant>(grid->EntityAbove);
+			return plant->Grow(bExecute);
+		}
+		else {
+			// no plant yet
+			if (bExecute) {
+				FRandomStream Stream(FMath::Rand());
+				TSubclassOf<APlant> plantType = PossiblePlants[FMath::RandRange(0, PossiblePlants.Num()-1)];
+				return grid->PutEntityAbove(plantType);
+			}
+
+			return true;
+			
+		}
+	}
+
+	return false;
+}
 
 

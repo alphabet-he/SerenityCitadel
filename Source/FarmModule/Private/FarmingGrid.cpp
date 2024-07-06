@@ -80,3 +80,19 @@ void AFarmingGrid::ClearPolluted()
 	}
 }
 
+bool AFarmingGrid::PutEntityAbove(TSubclassOf<AGroundEntity> groundEntityType)
+{
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	EntityAbove = GetWorld()->SpawnActor<AGroundEntity>(groundEntityType,
+		PlantMark->GetComponentLocation(), FRotator(0, 0, 0), SpawnParameters);
+
+	if (EntityAbove) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+

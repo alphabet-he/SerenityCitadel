@@ -69,4 +69,6 @@ public:
 
 	void ClearPolluted();
 
+	bool PutEntityAbove(TSubclassOf<AGroundEntity> groundEntityType);
+
 };
