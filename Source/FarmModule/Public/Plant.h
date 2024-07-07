@@ -31,6 +31,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool Grow(bool bExecute = true);
 
+	UFUNCTION(BlueprintCallable)
+	bool GrowToState(int state);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

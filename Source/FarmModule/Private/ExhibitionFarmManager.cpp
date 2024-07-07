@@ -149,17 +149,6 @@ TArray<float> AExhibitionFarmManager::GenerateGeometry(int rowSize, int columnSi
 	return ret;
 }
 
-void AExhibitionFarmManager::ReceiveSignal()
-{
-}
-
-void AExhibitionFarmManager::OperateGrid(int row, int column)
-{
-}
-
-void AExhibitionFarmManager::OperatePlant(APlant* plant)
-{
-}
 
 bool AExhibitionFarmManager::Operate(int rowInd, int colInd, bool bExecute)
 {
@@ -191,8 +180,20 @@ bool AExhibitionFarmManager::Operate(int rowInd, int colInd, bool bExecute)
 			// no plant yet
 			if (bExecute) {
 				FRandomStream Stream(FMath::Rand());
-				TSubclassOf<APlant> plantType = PossiblePlants[FMath::RandRange(0, PossiblePlants.Num()-1)];
-				return grid->PutEntityAbove(plantType);
+				int type = FMath::RandRange(0, PossiblePlants.Num() - 1);
+				TSubclassOf<APlant> plantType = PossiblePlants[type];
+				if (grid->PutEntityAbove(plantType)) {
+					APlant* plant = Cast<APlant>(grid->EntityAbove);
+					if (plant) {
+						plant->PlantType = type;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					return false;
+				}
 			}
 
 			return true;
@@ -201,6 +202,133 @@ bool AExhibitionFarmManager::Operate(int rowInd, int colInd, bool bExecute)
 	}
 
 	return false;
+}
+
+bool AExhibitionFarmManager::OperateRange(int rowInd, int colInd)
+{
+	if (Operate(rowInd, colInd, true)) {
+		for (int i = rowInd - 1; i <= rowInd + 1; i++) {
+			for (int j = colInd - 1; j <= colInd + 1; j++) {
+				if (i == rowInd && j == colInd) continue;
+				if (i < 0 || i >= RowSize ||
+					j < 0 || j >= ColumnSize) continue;
+				AExhibitionGrid* grid = GridPtrMap.GetElement(i, j);
+				if (grid->ExhibitionGridType != EExhibitionGrid::GRASS) {
+					Operate(i, j, true);
+				}
+			}
+		}
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool AExhibitionFarmManager::Save()
+{
+	FString dirPath = FPaths::ProjectDir();
+	FString gridTypePath = dirPath + "\\grid_type_save.txt";
+	FString plantTypePath = dirPath + "\\plant_type_save.txt";
+	FString plantStatePath = dirPath + "\\plant_state_save.txt";
+
+	FString gridTypeString = "";
+	FString plantTypeString = "";
+	FString plantStateString = "";
+
+	for (int i = 0; i < RowSize; i++) {
+		for (int j = 0; j < ColumnSize; j++) {
+			AExhibitionGrid* grid = GridPtrMap.GetElement(i, j);
+
+			// grid type
+			gridTypeString += FString::Printf(TEXT("%i,"),
+				static_cast<int>(grid->ExhibitionGridType));
+
+			// plant type & state
+			if (grid->EntityAbove) {
+				APlant* plant = Cast<APlant>(grid->EntityAbove);
+				if (plant) {
+					plantTypeString += FString::Printf(TEXT("%i,"), plant->PlantType);
+					plantStateString += FString::Printf(TEXT("%i,"), plant->CurrentGrowthState);
+
+				}
+				else {
+					plantTypeString += FString::Printf(TEXT("%i,"), -1);
+					plantStateString += FString::Printf(TEXT("%i,"), -1);
+				}
+			}
+			else {
+				plantTypeString += FString::Printf(TEXT("%i,"),-1);
+				plantStateString += FString::Printf(TEXT("%i,"), -1);
+			}
+
+		}
+	}
+
+
+	return (FFileHelper::SaveStringToFile(gridTypeString, *gridTypePath)
+		&& FFileHelper::SaveStringToFile(plantTypeString, *plantTypePath)
+		&& FFileHelper::SaveStringToFile(plantStateString, *plantStatePath));
+}
+
+bool AExhibitionFarmManager::Load()
+{
+	FString dirPath = FPaths::ProjectDir();
+	FString gridTypePath = dirPath + "\\grid_type_save.txt";
+	FString plantTypePath = dirPath + "\\plant_type_save.txt";
+	FString plantStatePath = dirPath + "\\plant_state_save.txt";
+
+	FString gridTypeString = "";
+	FString plantTypeString = "";
+	FString plantStateString = "";
+
+	
+	FFileHelper::LoadFileToString(gridTypeString, *gridTypePath);
+	FFileHelper::LoadFileToString(plantTypeString, *plantTypePath);
+	FFileHelper::LoadFileToString(plantStateString, *plantStatePath);
+
+	TArray<FString> gridTypeStrings;
+	TArray<FString> plantTypeStrings;
+	TArray<FString> plantStateStrings;
+
+	gridTypeString.ParseIntoArray(gridTypeStrings, TEXT(","), true);
+	plantTypeString.ParseIntoArray(plantTypeStrings, TEXT(","), true);
+	plantStateString.ParseIntoArray(plantStateStrings, TEXT(","), true);
+
+
+	int ind = 0;
+	for (int i = 0; i < RowSize; i++) {
+		for (int j = 0; j < ColumnSize; j++) {
+			AExhibitionGrid* grid = GridPtrMap.GetElement(i, j);
+
+			// grid type
+			int gridTypeInt = FCString::Atoi(*(gridTypeStrings[ind].TrimStartAndEnd()));
+			EExhibitionGrid gridType = static_cast<EExhibitionGrid>(gridTypeInt);
+			if (grid->ExhibitionGridType != gridType) {
+				grid->ExhibitionGridType = gridType;
+				grid->UpdateGrid(GridTextures[gridTypeInt]);
+			}
+
+			// plant
+			int plantTypeInt = FCString::Atoi(*(plantTypeStrings[ind].TrimStartAndEnd()));
+			if (plantTypeInt != -1) {
+				if (grid->PutEntityAbove(PossiblePlants[plantTypeInt])) {
+					
+					APlant* plant = Cast<APlant>(grid->EntityAbove);
+					if (plant) {
+						plant->PlantType = plantTypeInt;
+						int plantStateInt = FCString::Atoi(*(plantStateStrings[ind].TrimStartAndEnd()));
+						plant->GrowToState(plantStateInt);
+					}
+				}
+			
+			}
+
+			ind++;
+		}
+	}
+	return true;
 }
 
 

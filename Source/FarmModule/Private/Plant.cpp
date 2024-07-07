@@ -31,6 +31,18 @@ bool APlant::Grow(bool bExecute)
 
 }
 
+bool APlant::GrowToState(int state)
+{
+	if (state < 0 || state >= GrowthStateModels.Num()) {
+		return false;
+	}
+	if (state != CurrentGrowthState) {
+		CurrentGrowthState = state;
+		Mesh->SetStaticMesh(GrowthStateModels[CurrentGrowthState]);
+	}
+	return true;
+}
+
 // Called when the game starts or when spawned
 void APlant::BeginPlay()
 {

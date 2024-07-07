@@ -43,12 +43,7 @@ protected:
 		float waterHeightThreshold, float pollutionThreshold
 	);
 
-	UFUNCTION(BlueprintCallable)
-	void ReceiveSignal();
 
-	void OperateGrid(int row, int column);
-
-	void OperatePlant(APlant* plant);
 
 	UFUNCTION(BlueprintCallable)
 	AExhibitionGrid* GetGrid(int rowInd, int colInd) {
@@ -58,6 +53,17 @@ protected:
 	// bExecute: do change or only check availability
 	UFUNCTION(BlueprintCallable)
 	bool Operate(int rowInd, int colInd, bool bExecute);
+
+	// Operate 3*3 range grid
+	UFUNCTION(BlueprintCallable)
+	bool OperateRange(int rowInd, int colInd);
+
+
+	UFUNCTION(BlueprintCallable)
+	bool Save();
+
+	UFUNCTION(BlueprintCallable)
+	bool Load();
 
 protected:
 	TArray2D<float> GreenValue;
