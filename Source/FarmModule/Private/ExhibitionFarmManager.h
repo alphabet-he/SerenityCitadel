@@ -65,6 +65,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	bool Load();
 
+	UFUNCTION(BlueprintCallable)
+	TArray<bool> Decode(const uint8 b);
+
 protected:
 	TArray2D<float> GreenValue;
 	TArray2D<AExhibitionGrid*> GridPtrMap;

@@ -20,16 +20,6 @@ AExhibitionPawn::AExhibitionPawn()
 void AExhibitionPawn::BeginPlay()
 {
 	Super::BeginPlay();
-
-	AIController = Cast<AAIController>(GetController());
-	if (AIController)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Yes AI Controller"));
-		AIController->MoveToLocation(GetActorLocation() + FVector(250, 0, 0));
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("No AI Controller"));
-	}
 	
 }
 

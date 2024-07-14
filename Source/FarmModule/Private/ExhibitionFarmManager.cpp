@@ -331,4 +331,15 @@ bool AExhibitionFarmManager::Load()
 	return true;
 }
 
+TArray<bool> AExhibitionFarmManager::Decode(const uint8 b)
+{
+	TArray<bool> ret;
+	ret.Init(false, 4);
+	if (b & 1) ret[0] = true;
+	if (b & 2) ret[1] = true;
+	if (b & 4) ret[2] = true;
+	if (b & 8) ret[3] = true;
+	return ret;
+}
+
 
