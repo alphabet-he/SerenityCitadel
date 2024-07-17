@@ -342,4 +342,13 @@ TArray<bool> AExhibitionFarmManager::Decode(const uint8 b)
 	return ret;
 }
 
+uint8 AExhibitionFarmManager::Encode(TArray<bool> boolArray)
+{
+	uint8 byte = 0;
+	for (int i = 0; i < 4; i++) {
+		if (boolArray[i]) byte |= (1 << i);
+	}
+	return byte;
+}
+
 
