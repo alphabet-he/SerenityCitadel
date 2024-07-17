@@ -23,5 +23,10 @@ public:
 	EExhibitionGrid GetType() {
 		return ExhibitionGridType;
 	}
+
+	UFUNCTION(BlueprintCallable)
+	FCoordinate2D GetCoordinate() {
+		return coordinate;
+	}
 	
 };
