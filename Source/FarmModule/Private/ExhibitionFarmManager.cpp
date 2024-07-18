@@ -296,6 +296,11 @@ bool AExhibitionFarmManager::Load()
 	plantTypeString.ParseIntoArray(plantTypeStrings, TEXT(","), true);
 	plantStateString.ParseIntoArray(plantStateStrings, TEXT(","), true);
 
+	if (gridTypeStrings.Num() != RowSize * ColumnSize ||
+		plantTypeStrings.Num() != RowSize * ColumnSize ||
+		plantStateStrings.Num() != RowSize * ColumnSize) {
+		return false;
+	}
 
 	int ind = 0;
 	for (int i = 0; i < RowSize; i++) {
