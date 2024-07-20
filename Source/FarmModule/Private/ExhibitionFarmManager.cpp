@@ -26,11 +26,14 @@ void AExhibitionFarmManager::BeginPlay()
 
 	GreenValue.Init(RowSize, ColumnSize, 0);
 	GridPtrMap.Init(RowSize, ColumnSize, nullptr);
+	FlowerTypeMap.Init(RowSize, ColumnSize, -1);
 
 	int tempArrInd = 0;
 	for (int i = 0; i < RowSize; i++) {
 		for (int j = 0; j < ColumnSize; j++) {
+			TempGridPtrArray[tempArrInd]->EntityAbove = nullptr;
 			GridPtrMap.SetElement(i, j, TempGridPtrArray[tempArrInd]);
+			//FlowerTypeMap.SetElement(i, j, TempFlowerTypeArray[tempArrInd]);
 			tempArrInd++;
 		}
 	}
@@ -149,6 +152,74 @@ TArray<float> AExhibitionFarmManager::GenerateGeometry(int rowSize, int columnSi
 	return ret;
 }
 
+TArray<float> AExhibitionFarmManager::GenerateFlowerMap(int rowSize, int columnSize, 
+	FNoiseMapParams scaleNoiseMapParams, FNoiseMapParams typeNoiseMapParams, 
+	float scaleDivision, float typeDivision, float typeDivision1)
+{
+	float scaleSeed = 0;
+	float typeSeed = 0;
+
+	TempFlowerTypeArray.Empty();
+
+	TArray2D<float> scaleMap = GeneratePerlinNoiseMap(rowSize, columnSize, scaleNoiseMapParams, scaleSeed);
+	TArray2D<float> typeMap = GeneratePerlinNoiseMap(rowSize, columnSize, typeNoiseMapParams, typeSeed);
+
+	
+	for (int i = 0; i < rowSize; i++) {
+		for (int j = 0; j < columnSize; j++)
+		{
+			AExhibitionGrid* grid = TempGridPtrArray[i * ColumnSize + j];
+			if (grid->GetType() != EExhibitionGrid::WATER) {
+				FRandomStream Stream(FMath::Rand());
+				float scale = FMath::RandRange(0.3, 1.0);
+				float x_offset = FMath::RandRange(-15, 15);
+				float y_offset = FMath::RandRange(-15, 15);
+				float randNum = FMath::RandRange(0.0, 1.0);
+
+				if (randNum > scaleDivision) {
+					int randomType = FMath::RandRange(3, 5);
+					grid->PutEntityAbove(PossiblePlants[randomType], FVector(x_offset, y_offset, 0), FVector(scale, scale, scale));
+					APlant* plant = Cast<APlant>(grid->EntityAbove);
+					plant->GrowToState(plant->GrowthStateModels.Num() - 1);
+					TempFlowerTypeArray.Add(randomType);
+				}
+				else {
+					// small
+					if (typeMap.GetElement(i, j) < typeDivision) { // type A
+						grid->PutEntityAbove(PossiblePlants[0], FVector(x_offset, y_offset, 0), FVector(scale, scale, scale));
+						APlant* plant = Cast<APlant>(grid->EntityAbove);
+						plant->GrowToState(plant->GrowthStateModels.Num() - 1);
+						TempFlowerTypeArray.Add(0);
+					}
+					else if (typeMap.GetElement(i, j) > typeDivision1) { // type C
+						grid->PutEntityAbove(PossiblePlants[2], FVector(x_offset, y_offset, 0), FVector(scale, scale, scale));
+						APlant* plant = Cast<APlant>(grid->EntityAbove);
+						plant->GrowToState(plant->GrowthStateModels.Num() - 1);
+						TempFlowerTypeArray.Add(2);
+					}
+					else { // type B
+						grid->PutEntityAbove(PossiblePlants[1], FVector(x_offset, y_offset, 0), FVector(scale, scale, scale));
+						APlant* plant = Cast<APlant>(grid->EntityAbove);
+						plant->GrowToState(plant->GrowthStateModels.Num() - 1);
+						TempFlowerTypeArray.Add(1);
+					}
+				}
+				
+				
+			}
+			else {
+				TempFlowerTypeArray.Add(-1);
+			}
+		}
+	}
+
+	TArray<float> ret;
+	ret.Add(scaleSeed);
+	ret.Add(typeSeed);
+
+	return ret;
+}
+
 
 bool AExhibitionFarmManager::Operate(int rowInd, int colInd, bool bExecute)
 {
@@ -165,6 +236,11 @@ bool AExhibitionFarmManager::Operate(int rowInd, int colInd, bool bExecute)
 			currTypeInt++;
 			grid->ExhibitionGridType = static_cast<EExhibitionGrid>(currTypeInt);
 			grid->UpdateGrid(GridTextures[currTypeInt]);
+			if (grid->GetType() == EExhibitionGrid::GRASS) {
+				FRandomStream Stream(FMath::Rand());
+				int type = FMath::RandRange(0, PossibleGrass.Num() - 1);
+				grid->PutActorWithoutRecord(PossibleGrass[type]);
+			}
 		}
 
 		return true;
@@ -179,13 +255,17 @@ bool AExhibitionFarmManager::Operate(int rowInd, int colInd, bool bExecute)
 		else {
 			// no plant yet
 			if (bExecute) {
-				FRandomStream Stream(FMath::Rand());
-				int type = FMath::RandRange(0, PossiblePlants.Num() - 1);
+				int type = FlowerTypeMap.GetElement(rowInd, colInd);
 				TSubclassOf<APlant> plantType = PossiblePlants[type];
-				if (grid->PutEntityAbove(plantType)) {
+				FRandomStream Stream(FMath::Rand());
+				float scale = FMath::RandRange(0.3, 1.0);
+				float x_offset = FMath::RandRange(-15, 15);
+				float y_offset = FMath::RandRange(-15, 15);
+				if (grid->PutEntityAbove(plantType, FVector(x_offset, y_offset, 0), FVector(scale, scale, scale))) {
 					APlant* plant = Cast<APlant>(grid->EntityAbove);
 					if (plant) {
 						plant->PlantType = type;
+						plant->GrowToState(0);
 					}
 					else {
 						return false;
@@ -207,6 +287,8 @@ bool AExhibitionFarmManager::Operate(int rowInd, int colInd, bool bExecute)
 bool AExhibitionFarmManager::OperateRange(int rowInd, int colInd)
 {
 	if (Operate(rowInd, colInd, true)) {
+		AExhibitionGrid* centerGrid = GridPtrMap.GetElement(rowInd, colInd);
+		centerGrid->ActivateEffect();
 		for (int i = rowInd - 1; i <= rowInd + 1; i++) {
 			for (int j = colInd - 1; j <= colInd + 1; j++) {
 				if (i == rowInd && j == colInd) continue;
@@ -224,6 +306,15 @@ bool AExhibitionFarmManager::OperateRange(int rowInd, int colInd)
 	else {
 		return false;
 	}
+}
+
+void AExhibitionFarmManager::GrowRandomGrass(int rowInd, int colInd)
+{
+	FRandomStream Stream(FMath::Rand());
+	int type = FMath::RandRange(0, PossibleGrass.Num()-1);
+	AExhibitionGrid* grid = TempGridPtrArray[rowInd * ColumnSize + colInd];
+	grid->PutActorWithoutRecord(PossibleGrass[type]);
+	
 }
 
 bool AExhibitionFarmManager::Save()
@@ -313,6 +404,11 @@ bool AExhibitionFarmManager::Load()
 			if (grid->ExhibitionGridType != gridType) {
 				grid->ExhibitionGridType = gridType;
 				grid->UpdateGrid(GridTextures[gridTypeInt]);
+			}
+			if (grid->ExhibitionGridType == EExhibitionGrid::GRASS) {
+				FRandomStream Stream(FMath::Rand());
+				int type = FMath::RandRange(0, PossibleGrass.Num() - 1);
+				grid->PutActorWithoutRecord(PossibleGrass[type]);
 			}
 
 			// plant

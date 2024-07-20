@@ -97,3 +97,35 @@ bool AFarmingGrid::PutEntityAbove(TSubclassOf<AGroundEntity> groundEntityType)
 	}
 }
 
+bool AFarmingGrid::PutEntityAbove(TSubclassOf<AGroundEntity> groundEntityType, FVector relativeLocation, FVector scale)
+{
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	EntityAbove = GetWorld()->SpawnActor<AGroundEntity>(groundEntityType,
+		PlantMark->GetComponentLocation() + relativeLocation, FRotator(0, 0, 0), SpawnParameters);
+
+	if (EntityAbove) {
+		EntityAbove->SetActorScale3D(scale);
+		return true;
+	}
+	else {
+		return false;
+	}
+
+	return false;
+}
+
+bool AFarmingGrid::PutActorWithoutRecord(TSubclassOf<AActor> actorType)
+{
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	if (GetWorld()->SpawnActor<AActor>(actorType,
+		PlantMark->GetComponentLocation(), FRotator(0, 0, 0), SpawnParameters)) {
+		return true;
+	}
+
+	return false;
+}
+

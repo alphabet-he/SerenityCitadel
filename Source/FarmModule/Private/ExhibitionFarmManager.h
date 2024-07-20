@@ -43,7 +43,12 @@ protected:
 		float waterHeightThreshold, float pollutionThreshold
 	);
 
-
+	UFUNCTION(BlueprintCallable)
+	TArray<float> GenerateFlowerMap(
+		int rowSize, int columnSize,
+		FNoiseMapParams scaleNoiseMapParams, FNoiseMapParams typeNoiseMapParams,
+		float scaleDivision, float typeDivision, float typeDivision1
+	);
 
 	UFUNCTION(BlueprintCallable)
 	AExhibitionGrid* GetGrid(int rowInd, int colInd) {
@@ -57,6 +62,9 @@ protected:
 	// Operate 3*3 range grid
 	UFUNCTION(BlueprintCallable)
 	bool OperateRange(int rowInd, int colInd);
+
+	UFUNCTION(BlueprintCallable)
+	void GrowRandomGrass(int rowInd, int colInd);
 
 
 	UFUNCTION(BlueprintCallable)
@@ -79,10 +87,14 @@ protected:
 protected:
 	TArray2D<float> GreenValue;
 	TArray2D<AExhibitionGrid*> GridPtrMap;
+	TArray2D<int> FlowerTypeMap;
 	AExhibitionGameMode* ExhibitionGameMode;
 
 	UPROPERTY(EditAnywhere)
 	TArray<AExhibitionGrid*> TempGridPtrArray;
+
+	UPROPERTY(EditAnywhere)
+	TArray<int> TempFlowerTypeArray;
 
 public:
 
@@ -91,6 +103,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AExhibitionGrid> BP_GridActor;
+
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<AActor>> PossibleGrass;
 
 	/** Polluted, Dirt, Grass, Water */
 	UPROPERTY(EditAnywhere)

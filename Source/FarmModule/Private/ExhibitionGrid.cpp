@@ -3,3 +3,8 @@
 
 #include "ExhibitionGrid.h"
 
+AExhibitionGrid::AExhibitionGrid():AFarmingGrid()
+{
+	NiagaraEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
+	NiagaraEffect->SetupAttachment(RootComponent);
+}
