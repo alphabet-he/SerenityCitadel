@@ -63,6 +63,7 @@ public:
 
 	void UpdateGrid(UMaterial* material);
 
+	UFUNCTION(BlueprintCallable)
 	void UpdateGrid(UMaterialInstance* material);
 
 	void UpdatePolluted(UMaterialInstance* material);

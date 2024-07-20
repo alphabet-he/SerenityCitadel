@@ -71,6 +71,11 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	uint8 Encode (TArray<bool> boolArray);
 
+	UFUNCTION(BlueprintCallable)
+	UMaterialInstance* GetTexture(EExhibitionGrid type) {
+		return GridTextures[static_cast<int>(type)];
+	}
+
 protected:
 	TArray2D<float> GreenValue;
 	TArray2D<AExhibitionGrid*> GridPtrMap;
