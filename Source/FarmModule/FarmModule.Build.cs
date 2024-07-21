@@ -20,7 +20,8 @@ public class FarmModule : ModuleRules
             "InputCore",
             "EnhancedInput",
             "NinjaCharacter",
-            "AIModule"
+            "AIModule",
+            "Niagara"
         });
 	}
 }

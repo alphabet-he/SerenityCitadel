@@ -72,4 +72,9 @@ public:
 
 	bool PutEntityAbove(TSubclassOf<AGroundEntity> groundEntityType);
 
+	bool PutEntityAbove(TSubclassOf<AGroundEntity> groundEntityType,
+		FVector relativeLocation, FVector scale);
+
+	bool PutActorWithoutRecord(TSubclassOf<AActor> actorType);
+
 };

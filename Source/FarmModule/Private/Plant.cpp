@@ -36,10 +36,8 @@ bool APlant::GrowToState(int state)
 	if (state < 0 || state >= GrowthStateModels.Num()) {
 		return false;
 	}
-	if (state != CurrentGrowthState) {
-		CurrentGrowthState = state;
-		Mesh->SetStaticMesh(GrowthStateModels[CurrentGrowthState]);
-	}
+	CurrentGrowthState = state;
+	Mesh->SetStaticMesh(GrowthStateModels[CurrentGrowthState]);
 	return true;
 }
 
@@ -48,7 +46,7 @@ void APlant::BeginPlay()
 {
 	Super::BeginPlay();
 	if (GrowthStateModels.Num() > 0 &&
-		!Mesh->GetStaticMesh()) {
+		CurrentGrowthState < GrowthStateModels.Num()) {
 		Mesh->SetStaticMesh(GrowthStateModels[CurrentGrowthState]);
 	}
 }
